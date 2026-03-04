@@ -13,6 +13,7 @@
   "dependencies": {
     "@astrojs/node": "^9.5.4",
     "@astrojs/svelte": "^7.0.0",
+    "@astrojs/vercel": "^9.0.4",
     "@supabase/supabase-js": "^2.49.0",
     "astro": "^5.7.0",
     "svelte": "^5.0.0"
