@@ -44,11 +44,9 @@ const navItems = [
       <a href="/is" class="text-white/60 text-xs hover:text-white transition-colors">← Forsíða</a>
       <span class="text-white/40 text-xs">|</span>
       <span class="text-white/70 text-xs">{user.display_name || user.email}</span>
-      <form method="POST" action="/admin/api/logout">
-        <button type="submit" class="text-white/50 text-xs hover:text-white transition-colors cursor-pointer">
-          Útskrá
-        </button>
-      </form>
+      <a href="/admin/api/logout" class="text-white/50 text-xs hover:text-white transition-colors cursor-pointer">
+        Útskrá
+      </a>
     </div>
   </header>
 

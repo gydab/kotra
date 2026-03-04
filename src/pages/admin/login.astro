@@ -1,62 +1,5 @@
 ---
-export const prerender = false;
-
-import { getAdminUser } from '@lib/admin-auth';
-import { supabase } from '@lib/supabase';
-
-// If already logged in, redirect to admin dashboard
-const user = await getAdminUser(Astro);
-if (user) {
-  return Astro.redirect('/admin');
-}
-
-let error = '';
-
-// Handle login form submission
-if (Astro.request.method === 'POST') {
-  const formData = await Astro.request.formData();
-  const email = formData.get('email')?.toString() ?? '';
-  const password = formData.get('password')?.toString() ?? '';
-
-  const { data, error: authError } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (authError) {
-    error = 'Rangt netfang eða lykilorð.';
-  } else if (data.session) {
-    // Check if user is admin
-    const { data: adminProfile } = await supabase
-      .from('admin_profiles')
-      .select('id')
-      .eq('id', data.user.id)
-      .single();
-
-    if (!adminProfile) {
-      error = 'Þú hefur ekki admin aðgang.';
-      await supabase.auth.signOut();
-    } else {
-      // Set auth cookies
-      Astro.cookies.set('sb-access-token', data.session.access_token, {
-        path: '/',
-        httpOnly: true,
-        secure: true,
-        sameSite: 'lax',
-        maxAge: 60 * 60, // 1 hour
-      });
-      Astro.cookies.set('sb-refresh-token', data.session.refresh_token, {
-        path: '/',
-        httpOnly: true,
-        secure: true,
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7, // 7 days
-      });
-
-      return Astro.redirect('/admin');
-    }
-  }
-}
+export const prerender = true;
 ---
 
 <!DOCTYPE html>
@@ -82,12 +25,8 @@ if (Astro.request.method === 'POST') {
     </div>
 
     <!-- Login Form -->
-    <form method="POST" class="bg-white rounded-2xl shadow-2xl p-8 space-y-5">
-      {error && (
-        <div class="bg-red-50 text-red-700 px-4 py-3 rounded-lg text-sm border border-red-200">
-          {error}
-        </div>
-      )}
+    <form id="login-form" class="bg-white rounded-2xl shadow-2xl p-8 space-y-5">
+      <div id="error-box" class="hidden bg-red-50 text-red-700 px-4 py-3 rounded-lg text-sm border border-red-200"></div>
 
       <div>
         <label for="email" class="block text-sm font-medium text-gray-700 mb-1.5">
@@ -119,6 +58,7 @@ if (Astro.request.method === 'POST') {
 
       <button
         type="submit"
+        id="submit-btn"
         class="w-full gradient-cta text-white py-2.5 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity cursor-pointer"
       >
         Skrá inn
@@ -131,6 +71,86 @@ if (Astro.request.method === 'POST') {
       </div>
     </form>
   </div>
+
+  <script>
+    import { createClient } from '@supabase/supabase-js';
+
+    const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+    const form = document.getElementById('login-form');
+    const errorBox = document.getElementById('error-box');
+    const submitBtn = document.getElementById('submit-btn');
+
+    function showError(msg: string) {
+      errorBox!.textContent = msg;
+      errorBox!.classList.remove('hidden');
+    }
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorBox!.classList.add('hidden');
+      submitBtn!.textContent = 'Augnablik...';
+      submitBtn!.setAttribute('disabled', 'true');
+
+      const email = (document.getElementById('email') as HTMLInputElement).value;
+      const password = (document.getElementById('password') as HTMLInputElement).value;
+
+      try {
+        const { data, error: authError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (authError) {
+          showError('Rangt netfang eða lykilorð.');
+          submitBtn!.textContent = 'Skrá inn';
+          submitBtn!.removeAttribute('disabled');
+          return;
+        }
+
+        if (data.session) {
+          // Check if user is admin
+          const { data: adminProfile, error: profileError } = await supabase
+            .from('admin_profiles')
+            .select('id')
+            .eq('id', data.user.id)
+            .single();
+
+          if (profileError || !adminProfile) {
+            showError('Þú hefur ekki admin aðgang.');
+            await supabase.auth.signOut();
+            submitBtn!.textContent = 'Skrá inn';
+            submitBtn!.removeAttribute('disabled');
+            return;
+          }
+
+          // Set cookies via API
+          const res = await fetch('/admin/api/set-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              access_token: data.session.access_token,
+              refresh_token: data.session.refresh_token,
+            }),
+          });
+
+          if (res.ok) {
+            window.location.href = '/admin';
+          } else {
+            showError('Villa við innskráningu.');
+            submitBtn!.textContent = 'Skrá inn';
+            submitBtn!.removeAttribute('disabled');
+          }
+        }
+      } catch (err) {
+        showError('Villa við innskráningu.');
+        submitBtn!.textContent = 'Skrá inn';
+        submitBtn!.removeAttribute('disabled');
+      }
+    });
+  </script>
 </body>
 </html>
 
