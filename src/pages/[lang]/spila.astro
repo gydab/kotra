@@ -3,6 +3,7 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import type { Locale } from '@i18n/index';
 import { locales } from '@i18n/index';
 import BackgammonBoard from '@components/islands/BackgammonBoard.svelte';
+import PlayerAuth from '@components/islands/PlayerAuth.svelte';
 
 export function getStaticPaths() {
   return locales.map((locale) => ({
@@ -78,6 +79,11 @@ const l = labels[lang];
 
   <section class="bg-[#1a0f1f] py-8 px-4 min-h-[60vh]">
     <div class="max-w-[980px] mx-auto">
+
+      <!-- Player auth (login/signup) -->
+      <div class="mt-4 max-w-[760px] mx-auto">
+        <PlayerAuth client:load />
+      </div>
 
       <!-- Svelte island -->
       <BackgammonBoard client:load difficulty="hard" humanColor="white" />

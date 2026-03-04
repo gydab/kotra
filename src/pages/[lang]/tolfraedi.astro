@@ -1,0 +1,61 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import type { Locale } from '@i18n/index';
+import { locales } from '@i18n/index';
+import PlayerStats from '@components/islands/PlayerStats.svelte';
+import PlayerAuth from '@components/islands/PlayerAuth.svelte';
+
+export function getStaticPaths() {
+  return locales.map((locale) => ({
+    params: { lang: locale },
+  }));
+}
+
+const { lang } = Astro.params as { lang: Locale };
+
+const titles: Record<Locale, string> = {
+  is: 'Tölfræði — Kotrusambandið',
+  en: 'Statistics — Kotrusambandið',
+};
+
+const descriptions: Record<Locale, string> = {
+  is: 'Skoðaðu leikjasögu þína, villur og framfare í kotruleikunum.',
+  en: 'Review your game history, mistakes and progress in backgammon.',
+};
+
+const headings: Record<Locale, { title: string; sub: string }> = {
+  is: {
+    title: 'Leikjatölfræði',
+    sub: 'Skoðaðu hvernig þú stendur þig — finndu villur og bættu leikinn þinn',
+  },
+  en: {
+    title: 'Game Statistics',
+    sub: 'Track your performance — find mistakes and improve your game',
+  },
+};
+
+const l = headings[lang];
+---
+
+<BaseLayout locale={lang} title={titles[lang]} description={descriptions[lang]}>
+  <section class="gradient-hero pt-24 pb-12 text-center">
+    <div class="max-w-3xl mx-auto px-6">
+      <h1 class="text-4xl md:text-5xl text-white mb-3 tracking-tight" style="font-family: var(--font-heading);">
+        {l.title}
+      </h1>
+      <p class="text-white/70 text-lg">{l.sub}</p>
+    </div>
+  </section>
+
+  <section class="bg-[#1a0f1f] py-8 px-4 min-h-[60vh]">
+    <div class="max-w-[760px] mx-auto">
+      <!-- Auth (compact) -->
+      <div class="mb-6">
+        <PlayerAuth client:load />
+      </div>
+
+      <!-- Stats dashboard -->
+      <PlayerStats client:load />
+    </div>
+  </section>
+</BaseLayout>

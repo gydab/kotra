@@ -1,6 +1,7 @@
 <script lang="ts">
   import { BackgammonGame, type SingleMove, type Player, type DiceRoll, type Die, BAR_WHITE, BAR_BLACK, OFF_WHITE, OFF_BLACK } from '@lib/engine';
   import { chooseAIMove, shouldAIDouble, shouldAITake, type AIDifficulty } from '@lib/engine/ai';
+  import { analyzeAndSaveGame, isLoggedIn } from '@lib/game-persistence';
 
   // ─── Props ────────────────────────────────────────────
 
@@ -41,6 +42,10 @@
   // Match state
   let matchOver = $state(false);
   let gameCount = $state(0);              // games played in match
+
+  // Game persistence
+  let gameStartTime = $state(Date.now());
+  let analysisMessage = $state('');       // shown below game-over message
 
   // ── Board Dimensions (wider, smaller checkers) ────────
   const W = 920;
@@ -456,6 +461,30 @@
         ? `🎉 Þú vinnur! ${winLabel} +${r.points} stig (${scoreStr})`
         : `Tölvan vinnur ${winLabel} +${r.points} stig (${scoreStr})`;
     }
+
+    // Analyze & save (fire-and-forget, only if logged in)
+    analysisMessage = '';
+    const durationSeconds = Math.round((Date.now() - gameStartTime) / 1000);
+    analyzeAndSaveGame({
+      game,
+      humanColor: humanColor as Player,
+      difficulty,
+      matchLength,
+      durationSeconds,
+    }).then(({ saved, analysis }) => {
+      const parts: string[] = [];
+      if (analysis.blunderCount === 0) {
+        parts.push('✓ Engar villur!');
+      } else {
+        parts.push(`${analysis.blunderCount} ${analysis.blunderCount === 1 ? 'villa' : 'villur'}`);
+      }
+      if (saved) {
+        parts.push('📊 Leikur vistaður');
+      }
+      analysisMessage = parts.join(' · ');
+    }).catch(() => {
+      // Silently ignore analysis/save errors
+    });
   }
 
   function sleep(ms: number): Promise<void> {
@@ -529,6 +558,8 @@
     showCubeOffer = false;
     cubeOfferFrom = null;
     aiThinking = false;
+    analysisMessage = '';
+    gameStartTime = Date.now();
     tick = 0;
     message = 'Ýttu á 🎲 til að hefja leik';
 
@@ -559,6 +590,8 @@
     showCubeOffer = false;
     cubeOfferFrom = null;
     aiThinking = false;
+    analysisMessage = '';
+    gameStartTime = Date.now();
     tick = 0;
 
     // Clocks: reset per game if set
@@ -660,6 +693,9 @@
   <!-- Message Bar -->
   <div class="message-bar" class:no-moves={noMovesFlash}>
     <span class="message-text">{message}</span>
+    {#if analysisMessage && state.phase === 'game-over'}
+      <span class="analysis-msg">{analysisMessage}</span>
+    {/if}
     <div class="bar-right">
       {#if clockMinutes > 0 && !showSetup}
         <span class="clock-display" class:clock-low={isHumanTurn && humanClock <= 30}>
@@ -988,6 +1024,14 @@
 
   .message-bar.no-moves {
     background: #7c2d2d;
+  }
+
+  .analysis-msg {
+    font-size: 11px;
+    color: #F39F5A;
+    margin-left: 12px;
+    font-family: var(--font-mono, monospace);
+    opacity: 0.9;
   }
 
   .pip-display {
