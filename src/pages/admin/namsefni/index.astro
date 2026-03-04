@@ -1,0 +1,128 @@
+---
+export const prerender = false;
+
+import AdminLayout from '@layouts/AdminLayout.astro';
+import { requireAdmin } from '@lib/admin-auth';
+import { supabase } from '@lib/supabase';
+
+const user = await requireAdmin(Astro);
+
+// Handle actions
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData();
+  const action = formData.get('action');
+  const id = formData.get('id');
+
+  if (action === 'delete' && id) {
+    await supabase.from('resources').delete().eq('id', id);
+  } else if (action === 'create') {
+    await supabase.from('resources').insert({
+      title_is: formData.get('title_is') ?? '',
+      title_en: formData.get('title_en') ?? '',
+      url: formData.get('url') || null,
+      type: formData.get('type') || 'website',
+      description_is: formData.get('description_is') ?? '',
+      description_en: formData.get('description_en') ?? '',
+    });
+  }
+}
+
+const { data: resources } = await supabase
+  .from('resources')
+  .select('*')
+  .order('sort_order');
+
+const typeIcons: Record<string, string> = {
+  book: '📖', website: '🌐', app: '📱', course: '🎓', video: '🎬',
+};
+---
+
+<AdminLayout title="Námsefni" user={user} activeSection="namsefni">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Námsefni</h1>
+      <p class="text-sm text-gray-500 mt-1">{resources?.length ?? 0} efni skráð</p>
+    </div>
+  </div>
+
+  <!-- Quick add form -->
+  <div class="admin-card p-6 mb-6">
+    <h2 class="text-lg font-bold text-gray-900 mb-4">Bæta við efni</h2>
+    <form method="POST" class="space-y-4">
+      <input type="hidden" name="action" value="create" />
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="admin-label">Titill (IS)</label>
+          <input type="text" name="title_is" class="admin-input" required />
+        </div>
+        <div>
+          <label class="admin-label">Titill (EN)</label>
+          <input type="text" name="title_en" class="admin-input" />
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="admin-label">Slóð (URL)</label>
+          <input type="url" name="url" class="admin-input" />
+        </div>
+        <div>
+          <label class="admin-label">Tegund</label>
+          <select name="type" class="admin-input">
+            <option value="website">Vefsíða</option>
+            <option value="book">Bók</option>
+            <option value="app">App</option>
+            <option value="course">Námskeið</option>
+            <option value="video">Myndband</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="admin-label">Lýsing (IS)</label>
+          <textarea name="description_is" class="admin-textarea" rows="2"></textarea>
+        </div>
+        <div>
+          <label class="admin-label">Lýsing (EN)</label>
+          <textarea name="description_en" class="admin-textarea" rows="2"></textarea>
+        </div>
+      </div>
+      <button type="submit" class="admin-btn-primary">+ Bæta við</button>
+    </form>
+  </div>
+
+  <!-- List -->
+  <div class="admin-card">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Tegund</th>
+          <th>Titill</th>
+          <th>Slóð</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {resources && resources.length > 0 ? (
+          resources.map((r: any) => (
+            <tr>
+              <td>{typeIcons[r.type] ?? '📄'} {r.type}</td>
+              <td class="font-medium text-gray-900">{r.title_is}</td>
+              <td>
+                {r.url ? <a href={r.url} target="_blank" class="text-blue-600 text-xs hover:underline">Opna ↗</a> : '—'}
+              </td>
+              <td>
+                <form method="POST" style="display:inline;">
+                  <input type="hidden" name="action" value="delete" />
+                  <input type="hidden" name="id" value={r.id} />
+                  <button type="submit" class="admin-btn-danger text-xs" onclick="return confirm('Eyða?')">Eyða</button>
+                </form>
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr><td colspan="4" class="text-center text-gray-400 py-8">Ekkert námsefni skráð</td></tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+</AdminLayout>

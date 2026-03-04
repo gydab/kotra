@@ -1,0 +1,120 @@
+---
+export const prerender = false;
+
+import AdminLayout from '@layouts/AdminLayout.astro';
+import { requireAdmin } from '@lib/admin-auth';
+import { supabase } from '@lib/supabase';
+
+const user = await requireAdmin(Astro);
+
+// Handle actions
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData();
+  const action = formData.get('action');
+  const id = formData.get('id');
+
+  if (action === 'delete' && id) {
+    await supabase.from('board_members').delete().eq('id', id);
+  } else if (action === 'create') {
+    await supabase.from('board_members').insert({
+      name: formData.get('name') ?? '',
+      role_is: formData.get('role_is') ?? '',
+      role_en: formData.get('role_en') ?? '',
+      term_start: formData.get('term_start') || null,
+      term_end: formData.get('term_end') || null,
+      sort_order: parseInt(formData.get('sort_order') as string) || 0,
+    });
+  }
+}
+
+const { data: members } = await supabase
+  .from('board_members')
+  .select('*')
+  .order('sort_order');
+---
+
+<AdminLayout title="Stjórn" user={user} activeSection="stjorn">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Stjórnarmenn</h1>
+      <p class="text-sm text-gray-500 mt-1">{members?.length ?? 0} stjórnarmenn</p>
+    </div>
+  </div>
+
+  <!-- Quick add -->
+  <div class="admin-card p-6 mb-6">
+    <h2 class="text-lg font-bold text-gray-900 mb-4">Bæta við stjórnarmanni</h2>
+    <form method="POST" class="space-y-4">
+      <input type="hidden" name="action" value="create" />
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <label class="admin-label">Nafn</label>
+          <input type="text" name="name" class="admin-input" required />
+        </div>
+        <div>
+          <label class="admin-label">Hlutverk (IS)</label>
+          <input type="text" name="role_is" class="admin-input" placeholder="Formaður, Ritari..." />
+        </div>
+        <div>
+          <label class="admin-label">Hlutverk (EN)</label>
+          <input type="text" name="role_en" class="admin-input" placeholder="President, Secretary..." />
+        </div>
+      </div>
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <label class="admin-label">Upphaf kjörtímabils</label>
+          <input type="date" name="term_start" class="admin-input" />
+        </div>
+        <div>
+          <label class="admin-label">Lok kjörtímabils</label>
+          <input type="date" name="term_end" class="admin-input" />
+        </div>
+        <div>
+          <label class="admin-label">Röðun</label>
+          <input type="number" name="sort_order" class="admin-input" value="0" />
+        </div>
+      </div>
+      <button type="submit" class="admin-btn-primary">+ Bæta við</button>
+    </form>
+  </div>
+
+  <!-- List -->
+  <div class="admin-card">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Röðun</th>
+          <th>Nafn</th>
+          <th>Hlutverk</th>
+          <th>Kjörtímabil</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {members && members.length > 0 ? (
+          members.map((m: any) => (
+            <tr>
+              <td>{m.sort_order}</td>
+              <td class="font-medium text-gray-900">{m.name}</td>
+              <td>{m.role_is}</td>
+              <td>
+                {m.term_start ? new Date(m.term_start).getFullYear() : '—'}
+                {' — '}
+                {m.term_end ? new Date(m.term_end).getFullYear() : 'núna'}
+              </td>
+              <td>
+                <form method="POST" style="display:inline;">
+                  <input type="hidden" name="action" value="delete" />
+                  <input type="hidden" name="id" value={m.id} />
+                  <button type="submit" class="admin-btn-danger text-xs" onclick="return confirm('Eyða?')">Eyða</button>
+                </form>
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr><td colspan="5" class="text-center text-gray-400 py-8">Engir stjórnarmenn skráðir</td></tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+</AdminLayout>

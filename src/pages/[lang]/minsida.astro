@@ -1,0 +1,97 @@
+---
+export const prerender = false;
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import type { Locale } from '@i18n/index';
+import { t } from '@i18n/index';
+import { getAuthUser } from '@lib/admin-auth';
+import { supabase } from '@lib/supabase';
+import PlayerAuth from '@components/islands/PlayerAuth.svelte';
+import PlayerStats from '@components/islands/PlayerStats.svelte';
+import PlayerDashboard from '@components/islands/PlayerDashboard.svelte';
+
+const lang = (Astro.params.lang ?? 'is') as Locale;
+const i = t(lang);
+
+// Check if user is logged in (SSR)
+const authUser = await getAuthUser(Astro);
+
+let playerProfile: any = null;
+let recentGames: any[] = [];
+let weaknesses: any[] = [];
+
+if (authUser) {
+  // Fetch player profile
+  const { data: profile } = await supabase
+    .from('player_profiles')
+    .select('*')
+    .eq('id', authUser.id)
+    .single();
+  playerProfile = profile;
+
+  // Fetch recent games
+  const { data: games } = await supabase
+    .from('games')
+    .select('id, played_at, difficulty, player_won, win_type, points, final_cube_value, total_turns, blunder_count, duration_seconds, player_color')
+    .eq('player_id', authUser.id)
+    .order('played_at', { ascending: false })
+    .limit(20);
+  recentGames = games ?? [];
+
+  // Fetch weaknesses
+  const { data: weaknessData } = await supabase
+    .from('player_weakness_summary')
+    .select('*')
+    .eq('player_id', authUser.id)
+    .order('blunder_count', { ascending: false })
+    .limit(5);
+  weaknesses = weaknessData ?? [];
+}
+
+const titles: Record<Locale, string> = {
+  is: 'Mín síða — Kotrusambandið',
+  en: 'My Page — Kotrusambandið',
+};
+---
+
+<BaseLayout locale={lang} title={titles[lang]}>
+  <section class="gradient-hero pt-24 pb-12 text-center">
+    <div class="max-w-3xl mx-auto px-6">
+      <h1 class="text-4xl md:text-5xl text-white mb-3 tracking-tight" style="font-family: var(--font-heading);">
+        {i.player.dashboard}
+      </h1>
+      {playerProfile && (
+        <p class="text-white/70 text-lg">
+          {lang === 'is' ? 'Velkomin/n,' : 'Welcome,'} <strong class="text-gold">{playerProfile.display_name}</strong>
+        </p>
+      )}
+    </div>
+  </section>
+
+  <section class="bg-[#1a0f1f] py-8 px-4 min-h-[60vh]">
+    <div class="max-w-5xl mx-auto">
+      {!authUser ? (
+        <!-- Not logged in: show auth -->
+        <div class="max-w-md mx-auto">
+          <div class="text-center mb-6">
+            <p class="text-white/60 text-sm mb-4">
+              {lang === 'is'
+                ? 'Skráðu þig inn eða stofnaðu aðgang til að sjá leikjasöguna þína, tölfræði og þjálfunaráætlun.'
+                : 'Sign in or create an account to see your game history, statistics and training plan.'}
+            </p>
+          </div>
+          <PlayerAuth client:load />
+        </div>
+      ) : (
+        <!-- Logged in: show dashboard -->
+        <PlayerDashboard
+          client:load
+          locale={lang}
+          profile={JSON.stringify(playerProfile)}
+          recentGames={JSON.stringify(recentGames)}
+          weaknesses={JSON.stringify(weaknesses)}
+        />
+      )}
+    </div>
+  </section>
+</BaseLayout>

@@ -9,6 +9,7 @@
 import { BackgammonGame, type GameState, type Turn, type SingleMove, type Player } from '@lib/engine';
 import { chooseAIMove, evaluatePosition, type AIDifficulty } from '@lib/engine/ai';
 import { supabase } from '@lib/supabase';
+import { saveClassifiedBlunders } from '@lib/training';
 
 // ─── Types ──────────────────────────────────────────────
 
@@ -89,7 +90,7 @@ export function analyzeGame(
       continue; // phase mismatch, skip
     }
 
-    if (turn.player === humanColor && replay.state.phase === 'moving') {
+    if (turn.player === humanColor && (replay.state.phase as string) === 'moving') {
       humanTurnCount++;
 
       // Get AI's best move for this position
@@ -231,6 +232,28 @@ export async function analyzeAndSaveGame(params: {
   const { success, error } = await saveGame(gameData);
   if (!success) {
     console.warn('Game analysis complete but save failed:', error);
+  }
+
+  // Classify and save blunders for training recommendations
+  if (success && userId && analysis.blunderDetails.length > 0) {
+    // We need the game ID — re-fetch the last inserted game
+    const { data: savedGame } = await supabase
+      .from('games')
+      .select('id')
+      .eq('player_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (savedGame) {
+      await saveClassifiedBlunders(
+        savedGame.id,
+        userId,
+        analysis,
+        state.history,
+        humanColor
+      );
+    }
   }
 
   return { saved: success, analysis };

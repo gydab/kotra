@@ -43,15 +43,16 @@ const otherLocale = locale === 'is' ? 'en' : 'is';
         <a href={`/${locale}#namsefni`} class="nav-link relative text-white/80 text-sm font-medium hover:text-white transition-colors">{i.nav.resources}</a>
         <a href={`/${locale}/spila`} class="nav-link relative text-white/80 text-sm font-medium hover:text-white transition-colors">{i.nav.play}</a>
         <a href={`/${locale}/tolfraedi`} class="nav-link relative text-white/80 text-sm font-medium hover:text-white transition-colors">{i.nav.stats}</a>
+        <a href={`/${locale}/thjalfun`} class="nav-link relative text-white/80 text-sm font-medium hover:text-white transition-colors">{i.nav.training}</a>
       </nav>
 
       <div class="flex items-center gap-3">
         <a href={`/${otherLocale}`} class="text-white/60 text-xs font-semibold px-2.5 py-1 border border-white/20 rounded-md hover:border-white/50 hover:text-white transition-all">
           {locale === 'is' ? 'EN' : 'IS'}
         </a>
-        <button class="bg-white/10 text-white px-5 py-2 rounded-lg text-sm font-semibold border border-white/20 hover:bg-white/20 transition-all">
-          {i.nav.login}
-        </button>
+        <a href={`/${locale}/minsida`} class="bg-white/10 text-white px-5 py-2 rounded-lg text-sm font-semibold border border-white/20 hover:bg-white/20 transition-all no-underline">
+          {i.nav.myPage}
+        </a>
       </div>
     </div>
   </header>

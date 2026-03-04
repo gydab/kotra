@@ -1,5 +1,5 @@
 ---
-import type { AdminUser } from '@lib/admin-auth';
+import type { AdminUser, AdminRole } from '@lib/admin-auth';
 
 interface Props {
   title: string;
@@ -9,16 +9,34 @@ interface Props {
 
 const { title, user, activeSection = '' } = Astro.props;
 
-const navItems = [
-  { href: '/admin', label: 'Yfirlit', icon: '📊', key: 'dashboard' },
-  { href: '/admin/frettir', label: 'Fréttir', icon: '📰', key: 'frettir' },
-  { href: '/admin/spilarar', label: 'Spilarar', icon: '👤', key: 'spilarar' },
-  { href: '/admin/mot', label: 'Mót', icon: '🏆', key: 'mot' },
-  { href: '/admin/namsefni', label: 'Námsefni', icon: '📚', key: 'namsefni' },
-  { href: '/admin/fjolmidlar', label: 'Fjölmiðlar', icon: '📺', key: 'fjolmidlar' },
-  { href: '/admin/postlisti', label: 'Póstlisti', icon: '📧', key: 'postlisti' },
-  { href: '/admin/stjorn', label: 'Stjórn', icon: '👥', key: 'stjorn' },
+// Role-based nav items
+interface NavItem {
+  href: string;
+  label: string;
+  icon: string;
+  key: string;
+  roles: AdminRole[];
+}
+
+const allNavItems: NavItem[] = [
+  { href: '/admin', label: 'Yfirlit', icon: '📊', key: 'dashboard', roles: ['admin', 'editor', 'tournament_director'] },
+  { href: '/admin/frettir', label: 'Fréttir', icon: '📰', key: 'frettir', roles: ['admin', 'editor'] },
+  { href: '/admin/spilarar', label: 'Spilarar', icon: '👤', key: 'spilarar', roles: ['admin'] },
+  { href: '/admin/mot', label: 'Mót', icon: '🏆', key: 'mot', roles: ['admin', 'tournament_director'] },
+  { href: '/admin/namsefni', label: 'Námsefni', icon: '📚', key: 'namsefni', roles: ['admin', 'editor'] },
+  { href: '/admin/fjolmidlar', label: 'Fjölmiðlar', icon: '📺', key: 'fjolmidlar', roles: ['admin', 'editor'] },
+  { href: '/admin/postlisti', label: 'Póstlisti', icon: '📧', key: 'postlisti', roles: ['admin'] },
+  { href: '/admin/stjorn', label: 'Stjórn', icon: '👥', key: 'stjorn', roles: ['admin'] },
 ];
+
+// Filter by user's role
+const navItems = allNavItems.filter(item => item.roles.includes(user.role as AdminRole));
+
+const roleLabels: Record<string, string> = {
+  admin: 'Stjórnandi',
+  editor: 'Ritstjóri',
+  tournament_director: 'Mótstjóri',
+};
 ---
 
 <!DOCTYPE html>
@@ -44,6 +62,7 @@ const navItems = [
       <a href="/is" class="text-white/60 text-xs hover:text-white transition-colors">← Forsíða</a>
       <span class="text-white/40 text-xs">|</span>
       <span class="text-white/70 text-xs">{user.display_name || user.email}</span>
+      <span class="text-xs px-2 py-0.5 rounded-full bg-white/10 text-gold">{roleLabels[user.role] ?? user.role}</span>
       <a href="/admin/api/logout" class="text-white/50 text-xs hover:text-white transition-colors cursor-pointer">
         Útskrá
       </a>

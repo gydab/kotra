@@ -1,0 +1,74 @@
+---
+export const prerender = false;
+
+import AdminLayout from '@layouts/AdminLayout.astro';
+import { requireAdmin } from '@lib/admin-auth';
+import { supabase } from '@lib/supabase';
+
+const user = await requireAdmin(Astro);
+
+// Handle delete
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData();
+  const action = formData.get('action');
+  const id = formData.get('id');
+
+  if (action === 'delete' && id) {
+    await supabase.from('players').delete().eq('id', id);
+  }
+}
+
+// Fetch players
+const { data: players } = await supabase
+  .from('players')
+  .select('*')
+  .order('name');
+---
+
+<AdminLayout title="Spilarar" user={user} activeSection="spilarar">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Spilarar</h1>
+      <p class="text-sm text-gray-500 mt-1">{players?.length ?? 0} skráðir spilarar</p>
+    </div>
+  </div>
+
+  <div class="admin-card">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Nafn</th>
+          <th>Netfang</th>
+          <th>Rating</th>
+          <th>BG Heroes</th>
+          <th>BG Galaxy</th>
+          <th>Skráður</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {players && players.length > 0 ? (
+          players.map((p: any) => (
+            <tr>
+              <td class="font-medium text-gray-900">{p.name}</td>
+              <td>{p.email ?? '—'}</td>
+              <td>{p.rating ?? 0}</td>
+              <td>{p.bg_heroes_nick ?? '—'}</td>
+              <td>{p.bg_galaxy_nick ?? '—'}</td>
+              <td>{p.joined_date ? new Date(p.joined_date).toLocaleDateString('is-IS') : '—'}</td>
+              <td>
+                <form method="POST" style="display:inline;">
+                  <input type="hidden" name="action" value="delete" />
+                  <input type="hidden" name="id" value={p.id} />
+                  <button type="submit" class="admin-btn-danger text-xs" onclick="return confirm('Ertu viss?')">Eyða</button>
+                </form>
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr><td colspan="7" class="text-center text-gray-400 py-8">Engir spilarar skráðir</td></tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+</AdminLayout>

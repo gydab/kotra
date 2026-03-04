@@ -1,0 +1,156 @@
+---
+export const prerender = false;
+
+import AdminLayout from '@layouts/AdminLayout.astro';
+import { requireRole } from '@lib/admin-auth';
+import { supabase } from '@lib/supabase';
+
+const user = await requireRole(Astro, ['admin', 'tournament_director']);
+const { id } = Astro.params;
+
+if (!id) return Astro.redirect('/admin/mot');
+
+// Fetch tournament
+const { data: tournament } = await supabase
+  .from('tournaments')
+  .select('*')
+  .eq('id', id)
+  .single();
+
+if (!tournament) return Astro.redirect('/admin/mot');
+
+let error = '';
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+
+  const { error: updateError } = await supabase
+    .from('tournaments')
+    .update({
+      name_is: form.get('name_is') ?? '',
+      name_en: form.get('name_en') ?? '',
+      date: form.get('date') || null,
+      location: form.get('location') || null,
+      type: form.get('type') || 'domestic',
+      description_is: form.get('description_is') ?? '',
+      description_en: form.get('description_en') ?? '',
+      status: form.get('status') || 'upcoming',
+      wbif_link: form.get('wbif_link') || null,
+    })
+    .eq('id', id);
+
+  if (updateError) {
+    error = updateError.message;
+  } else {
+    return Astro.redirect('/admin/mot');
+  }
+}
+
+// Fetch results for this tournament
+const { data: results } = await supabase
+  .from('tournament_results')
+  .select('*, players(name)')
+  .eq('tournament_id', id)
+  .order('placement');
+---
+
+<AdminLayout title={`Breyta: ${tournament.name_is}`} user={user} activeSection="mot">
+  <div class="mb-6">
+    <a href="/admin/mot" class="text-sm text-gray-500 hover:text-gray-700">← Til baka</a>
+    <h1 class="text-2xl font-bold text-gray-900 mt-2">Breyta móti</h1>
+  </div>
+
+  {error && <div class="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-4 mb-4">{error}</div>}
+
+  <div class="admin-card p-6 mb-6">
+    <form method="POST" class="space-y-6">
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <label class="admin-label">Heiti (IS)</label>
+          <input type="text" name="name_is" class="admin-input" value={tournament.name_is} required />
+        </div>
+        <div>
+          <label class="admin-label">Heiti (EN)</label>
+          <input type="text" name="name_en" class="admin-input" value={tournament.name_en} />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-6">
+        <div>
+          <label class="admin-label">Dagsetning</label>
+          <input type="date" name="date" class="admin-input" value={tournament.date ?? ''} />
+        </div>
+        <div>
+          <label class="admin-label">Staður</label>
+          <input type="text" name="location" class="admin-input" value={tournament.location ?? ''} />
+        </div>
+        <div>
+          <label class="admin-label">Tegund</label>
+          <select name="type" class="admin-input">
+            <option value="domestic" selected={tournament.type === 'domestic'}>Innlent</option>
+            <option value="wbif" selected={tournament.type === 'wbif'}>WBIF</option>
+            <option value="friendly" selected={tournament.type === 'friendly'}>Vináttu</option>
+            <option value="other" selected={tournament.type === 'other'}>Annað</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="admin-label">Staða</label>
+        <select name="status" class="admin-input" style="max-width: 200px;">
+          <option value="upcoming" selected={tournament.status === 'upcoming'}>Komandi</option>
+          <option value="active" selected={tournament.status === 'active'}>Í gangi</option>
+          <option value="completed" selected={tournament.status === 'completed'}>Lokið</option>
+        </select>
+      </div>
+
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <label class="admin-label">Lýsing (IS)</label>
+          <textarea name="description_is" class="admin-textarea">{tournament.description_is}</textarea>
+        </div>
+        <div>
+          <label class="admin-label">Lýsing (EN)</label>
+          <textarea name="description_en" class="admin-textarea">{tournament.description_en}</textarea>
+        </div>
+      </div>
+
+      <div>
+        <label class="admin-label">WBIF tengill</label>
+        <input type="url" name="wbif_link" class="admin-input" value={tournament.wbif_link ?? ''} />
+      </div>
+
+      <div class="flex gap-3">
+        <button type="submit" class="admin-btn-primary">Vista breytingar</button>
+        <a href="/admin/mot" class="admin-btn-secondary">Hætta við</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tournament results -->
+  <div class="admin-card p-6">
+    <h2 class="text-lg font-bold text-gray-900 mb-4">Úrslit ({results?.length ?? 0})</h2>
+    {results && results.length > 0 ? (
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Sæti</th>
+            <th>Spilari</th>
+            <th>Stig</th>
+          </tr>
+        </thead>
+        <tbody>
+          {results.map((r: any) => (
+            <tr>
+              <td>{r.placement ?? '—'}</td>
+              <td>{r.players?.name ?? '—'}</td>
+              <td>{r.points ?? '—'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    ) : (
+      <p class="text-gray-400 text-sm">Engar úrslit skráðar</p>
+    )}
+  </div>
+</AdminLayout>

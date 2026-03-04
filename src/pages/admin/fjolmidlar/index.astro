@@ -1,0 +1,127 @@
+---
+export const prerender = false;
+
+import AdminLayout from '@layouts/AdminLayout.astro';
+import { requireAdmin } from '@lib/admin-auth';
+import { supabase } from '@lib/supabase';
+
+const user = await requireAdmin(Astro);
+
+// Handle actions
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData();
+  const action = formData.get('action');
+  const id = formData.get('id');
+
+  if (action === 'delete' && id) {
+    await supabase.from('media_coverage').delete().eq('id', id);
+  } else if (action === 'create') {
+    await supabase.from('media_coverage').insert({
+      title: formData.get('title') ?? '',
+      outlet: formData.get('outlet') || null,
+      url: formData.get('url') || null,
+      published_date: formData.get('published_date') || null,
+      type: formData.get('type') || 'web',
+      description_is: formData.get('description_is') ?? '',
+    });
+  }
+}
+
+const { data: media } = await supabase
+  .from('media_coverage')
+  .select('*')
+  .order('published_date', { ascending: false });
+
+const typeLabels: Record<string, string> = {
+  tv: '📺 Sjónvarp', radio: '📻 Útvarp', print: '📰 Prentmiðlar', web: '🌐 Vefmiðlar',
+};
+---
+
+<AdminLayout title="Fjölmiðlar" user={user} activeSection="fjolmidlar">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Fjölmiðlaumfjöllun</h1>
+      <p class="text-sm text-gray-500 mt-1">{media?.length ?? 0} umfjöllanir</p>
+    </div>
+  </div>
+
+  <!-- Quick add -->
+  <div class="admin-card p-6 mb-6">
+    <h2 class="text-lg font-bold text-gray-900 mb-4">Bæta við umfjöllun</h2>
+    <form method="POST" class="space-y-4">
+      <input type="hidden" name="action" value="create" />
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="admin-label">Titill</label>
+          <input type="text" name="title" class="admin-input" required />
+        </div>
+        <div>
+          <label class="admin-label">Miðill</label>
+          <input type="text" name="outlet" class="admin-input" placeholder="RÚV, Vísir..." />
+        </div>
+      </div>
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <label class="admin-label">Slóð (URL)</label>
+          <input type="url" name="url" class="admin-input" />
+        </div>
+        <div>
+          <label class="admin-label">Dagsetning</label>
+          <input type="date" name="published_date" class="admin-input" />
+        </div>
+        <div>
+          <label class="admin-label">Tegund</label>
+          <select name="type" class="admin-input">
+            <option value="web">Vefmiðill</option>
+            <option value="tv">Sjónvarp</option>
+            <option value="radio">Útvarp</option>
+            <option value="print">Prentmiðill</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="admin-label">Lýsing</label>
+        <textarea name="description_is" class="admin-textarea" rows="2"></textarea>
+      </div>
+      <button type="submit" class="admin-btn-primary">+ Bæta við</button>
+    </form>
+  </div>
+
+  <!-- List -->
+  <div class="admin-card">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Tegund</th>
+          <th>Titill</th>
+          <th>Miðill</th>
+          <th>Dagsetning</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {media && media.length > 0 ? (
+          media.map((m: any) => (
+            <tr>
+              <td>{typeLabels[m.type] ?? m.type}</td>
+              <td class="font-medium text-gray-900">
+                {m.url ? <a href={m.url} target="_blank" class="hover:underline">{m.title}</a> : m.title}
+              </td>
+              <td>{m.outlet ?? '—'}</td>
+              <td>{m.published_date ? new Date(m.published_date).toLocaleDateString('is-IS') : '—'}</td>
+              <td>
+                <form method="POST" style="display:inline;">
+                  <input type="hidden" name="action" value="delete" />
+                  <input type="hidden" name="id" value={m.id} />
+                  <button type="submit" class="admin-btn-danger text-xs" onclick="return confirm('Eyða?')">Eyða</button>
+                </form>
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr><td colspan="5" class="text-center text-gray-400 py-8">Engin umfjöllun skráð</td></tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+</AdminLayout>

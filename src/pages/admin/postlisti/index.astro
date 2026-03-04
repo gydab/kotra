@@ -1,0 +1,99 @@
+---
+export const prerender = false;
+
+import AdminLayout from '@layouts/AdminLayout.astro';
+import { requireAdmin } from '@lib/admin-auth';
+import { supabase } from '@lib/supabase';
+
+const user = await requireAdmin(Astro);
+
+// Handle actions
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData();
+  const action = formData.get('action');
+  const id = formData.get('id');
+
+  if (action === 'delete' && id) {
+    await supabase.from('newsletter_subscribers').delete().eq('id', id);
+  }
+}
+
+const { data: subscribers } = await supabase
+  .from('newsletter_subscribers')
+  .select('*')
+  .order('created_at', { ascending: false });
+
+const activeCount = subscribers?.filter((s: any) => s.subscribed).length ?? 0;
+---
+
+<AdminLayout title="Póstlisti" user={user} activeSection="postlisti">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Póstlisti</h1>
+      <p class="text-sm text-gray-500 mt-1">
+        {subscribers?.length ?? 0} skráðir · {activeCount} virkir
+      </p>
+    </div>
+    <div class="flex gap-3">
+      <button class="admin-btn-secondary" onclick="exportCSV()" id="btn-export">📥 Flytja út CSV</button>
+    </div>
+  </div>
+
+  <div class="admin-card">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Netfang</th>
+          <th>Nafn</th>
+          <th>Staða</th>
+          <th>Skráður</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {subscribers && subscribers.length > 0 ? (
+          subscribers.map((s: any) => (
+            <tr>
+              <td class="font-medium text-gray-900">{s.email}</td>
+              <td>{s.name ?? '—'}</td>
+              <td>
+                <span class={`admin-badge ${s.subscribed ? 'admin-badge-green' : 'admin-badge-gray'}`}>
+                  {s.subscribed ? 'Virkur' : 'Óvirkur'}
+                </span>
+              </td>
+              <td>{new Date(s.created_at).toLocaleDateString('is-IS')}</td>
+              <td>
+                <form method="POST" style="display:inline;">
+                  <input type="hidden" name="action" value="delete" />
+                  <input type="hidden" name="id" value={s.id} />
+                  <button type="submit" class="admin-btn-danger text-xs" onclick="return confirm('Eyða?')">Eyða</button>
+                </form>
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr><td colspan="5" class="text-center text-gray-400 py-8">Engir áskrifendur</td></tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+
+  <script is:inline>
+    function exportCSV() {
+      const rows = document.querySelectorAll('.admin-table tbody tr');
+      let csv = 'Netfang,Nafn,Staða,Skráður\n';
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 4) {
+          csv += `"${cells[0].textContent}","${cells[1].textContent}","${cells[2].textContent?.trim()}","${cells[3].textContent}"\n`;
+        }
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'postlisti.csv';
+      a.click();
+    }
+  </script>
+</AdminLayout>

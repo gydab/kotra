@@ -1,0 +1,103 @@
+---
+export const prerender = false;
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import type { Locale } from '@i18n/index';
+import { t } from '@i18n/index';
+import { getAuthUser } from '@lib/admin-auth';
+import { supabase } from '@lib/supabase';
+import { fetchTrainingCategories, fetchWeaknesses, fetchTrainingStats } from '@lib/training';
+import PlayerAuth from '@components/islands/PlayerAuth.svelte';
+import TrainingHub from '@components/islands/TrainingHub.svelte';
+
+const lang = (Astro.params.lang ?? 'is') as Locale;
+const i = t(lang);
+
+const authUser = await getAuthUser(Astro);
+
+let categories: any[] = [];
+let weaknesses: any[] = [];
+let trainingStats: any = null;
+
+// Fetch categories always (public)
+categories = await fetchTrainingCategories();
+
+if (authUser) {
+  weaknesses = await fetchWeaknesses(authUser.id);
+  trainingStats = await fetchTrainingStats(authUser.id);
+}
+
+const titles: Record<Locale, string> = {
+  is: 'Þjálfun — Kotrusambandið',
+  en: 'Training — Kotrusambandið',
+};
+---
+
+<BaseLayout locale={lang} title={titles[lang]}>
+  <section class="gradient-hero pt-24 pb-12 text-center">
+    <div class="max-w-3xl mx-auto px-6">
+      <h1 class="text-4xl md:text-5xl text-white mb-3 tracking-tight" style="font-family: var(--font-heading);">
+        {i.training.title}
+      </h1>
+      <p class="text-white/70 text-lg">{i.training.subtitle}</p>
+    </div>
+  </section>
+
+  <section class="bg-[#1a0f1f] py-8 px-4 min-h-[60vh]">
+    <div class="max-w-5xl mx-auto">
+      {!authUser ? (
+        <!-- Not logged in -->
+        <div class="max-w-md mx-auto text-center">
+          <p class="text-white/60 text-sm mb-6">
+            {lang === 'is'
+              ? 'Skráðu þig inn til að fá persónulega þjálfunaráætlun byggða á leikjunum þínum.'
+              : 'Sign in to get a personalized training plan based on your games.'}
+          </p>
+          <PlayerAuth client:load />
+
+          <!-- Show categories preview even for non-logged in users -->
+          <div class="mt-8">
+            <h2 class="text-white text-xl mb-4" style="font-family: var(--font-heading);">
+              {i.training.categories}
+            </h2>
+            <div class="categories-preview">
+              {categories.map((c: any) => (
+                <div class="category-preview-card">
+                  <span class="category-icon">{c.icon}</span>
+                  <div>
+                    <strong class="category-name">{lang === 'is' ? c.name_is : c.name_en}</strong>
+                    <p class="category-desc">{lang === 'is' ? c.description_is : c.description_en}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <!-- Logged in: full training hub -->
+        <TrainingHub
+          client:load
+          locale={lang}
+          categories={JSON.stringify(categories)}
+          weaknesses={JSON.stringify(weaknesses)}
+          trainingStats={JSON.stringify(trainingStats)}
+        />
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .categories-preview {
+    display: flex; flex-direction: column; gap: 8px; text-align: left;
+  }
+  .category-preview-card {
+    display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; transition: background 0.15s;
+  }
+  .category-preview-card:hover { background: rgba(255,255,255,0.08); }
+  .category-icon { font-size: 24px; line-height: 1; }
+  .category-name { display: block; color: #FAF5F0; font-size: 14px; }
+  .category-desc { color: rgba(250,245,240,0.5); font-size: 12px; margin-top: 2px; line-height: 1.4; }
+</style>

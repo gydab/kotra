@@ -1,0 +1,86 @@
+---
+export const prerender = false;
+
+import AdminLayout from '@layouts/AdminLayout.astro';
+import { requireRole, canManageTournaments } from '@lib/admin-auth';
+import { supabase } from '@lib/supabase';
+
+const user = await requireRole(Astro, ['admin', 'tournament_director']);
+
+// Handle actions
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData();
+  const action = formData.get('action');
+  const id = formData.get('id');
+
+  if (action === 'delete' && id) {
+    await supabase.from('tournaments').delete().eq('id', id);
+  }
+}
+
+// Fetch tournaments
+const { data: tournaments } = await supabase
+  .from('tournaments')
+  .select('*')
+  .order('date', { ascending: false });
+
+function statusBadge(status: string) {
+  const map: Record<string, { class: string; label: string }> = {
+    upcoming: { class: 'admin-badge-yellow', label: 'Komandi' },
+    active: { class: 'admin-badge-green', label: 'Í gangi' },
+    completed: { class: 'admin-badge-gray', label: 'Lokið' },
+  };
+  return map[status] ?? { class: 'admin-badge-gray', label: status };
+}
+---
+
+<AdminLayout title="Mót" user={user} activeSection="mot">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Mót</h1>
+      <p class="text-sm text-gray-500 mt-1">{tournaments?.length ?? 0} mót skráð</p>
+    </div>
+    <a href="/admin/mot/nytt" class="admin-btn-primary">+ Nýtt mót</a>
+  </div>
+
+  <div class="admin-card">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Heiti</th>
+          <th>Dagsetning</th>
+          <th>Staður</th>
+          <th>Tegund</th>
+          <th>Staða</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {tournaments && tournaments.length > 0 ? (
+          tournaments.map((t: any) => {
+            const badge = statusBadge(t.status);
+            return (
+              <tr>
+                <td class="font-medium text-gray-900">{t.name_is}</td>
+                <td>{t.date ? new Date(t.date).toLocaleDateString('is-IS') : '—'}</td>
+                <td>{t.location ?? '—'}</td>
+                <td>{t.type ?? '—'}</td>
+                <td><span class={`admin-badge ${badge.class}`}>{badge.label}</span></td>
+                <td class="flex gap-2">
+                  <a href={`/admin/mot/${t.id}`} class="admin-btn-secondary text-xs">Breyta</a>
+                  <form method="POST" style="display:inline;">
+                    <input type="hidden" name="action" value="delete" />
+                    <input type="hidden" name="id" value={t.id} />
+                    <button type="submit" class="admin-btn-danger text-xs" onclick="return confirm('Eyða móti?')">Eyða</button>
+                  </form>
+                </td>
+              </tr>
+            );
+          })
+        ) : (
+          <tr><td colspan="6" class="text-center text-gray-400 py-8">Engin mót skráð</td></tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+</AdminLayout>
