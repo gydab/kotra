@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kotrusamband Íslands</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ============================================
+           KOTRA.IS — PRÓTÓTÝPA
+           Litir: #451952 #662549 #AE445A #F39F5A
+           Stíll: Hlýlegt + prófessíónelt
+           ============================================ */
+
+        :root {
+            /* Aðallitir */
+            --deep-purple: #451952;
+            --warm-plum: #662549;
+            --berry: #AE445A;
+            --gold: #F39F5A;
+            
+            /* Bakgrunnslitir */
+            --off-white: #FAF5F0;
+            --lavender: #F3EDF7;
+            --dark-text: #2D1B33;
+            --muted-text: #6B5B73;
+            
+            /* Gradients */
+            --gradient-hero: linear-gradient(135deg, #451952 0%, #662549 50%, #5a2d5e 100%);
+            --gradient-cta: linear-gradient(135deg, #AE445A 0%, #F39F5A 100%);
+            --gradient-cta-hover: linear-gradient(135deg, #c44f66 0%, #f5af70 100%);
+            --gradient-card-top: linear-gradient(90deg, #AE445A, #F39F5A);
+            
+            /* Annað */
+            --radius: 12px;
+            --radius-lg: 20px;
+            --shadow: 0 4px 20px rgba(69, 25, 82, 0.08);
+            --shadow-hover: 0 8px 30px rgba(69, 25, 82, 0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--dark-text);
+            background: var(--off-white);
+            line-height: 1.7;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3 {
+            font-family: 'DM Serif Display', Georgia, serif;
+            line-height: 1.2;
+        }
+
+        .stat-number {
+            font-family: 'Space Grotesk', monospace;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ============================================
+           HEADER
+           ============================================ */
+        
+        .header {
+            background: var(--gradient-hero);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-cta);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            color: white;
+            font-family: 'DM Serif Display', serif;
+            font-size: 20px;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav a {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav a:hover {
+            color: white;
+        }
+
+        .nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            transition: var(--transition);
+        }
+
+        .nav a:hover::after {
+            width: 100%;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lang-toggle {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 4px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .lang-toggle:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+            color: white;
+        }
+
+        .btn-login {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-login:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ============================================
+           HERO SECTION
+           ============================================ */
+        
+        .hero {
+            background: var(--gradient-hero);
+            padding: 100px 0 140px;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(174, 68, 90, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(243, 159, 90, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 6px 16px;
+            border-radius: 100px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 32px;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-badge-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--gold);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 6vw, 64px);
+            color: white;
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+        }
+
+        .hero h1 .accent {
+            background: var(--gradient-cta);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 18px;
+            max-width: 560px;
+            margin: 0 auto 40px;
+            line-height: 1.8;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: var(--gradient-cta);
+            color: white;
+            padding: 14px 32px;
+            border-radius: var(--radius);
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(174, 68, 90, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--gradient-cta-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(174, 68, 90, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 14px 32px;
+            border-radius: var(--radius);
+            font-size: 15px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Wave divider */
+        .wave-divider {
+            position: relative;
+            margin-top: -1px;
+        }
+
+        .wave-divider svg {
+            display: block;
+            width: 100%;
+            height: 60px;
+        }
+
+        /* ============================================
+           STATS BAR
+           ============================================ */
+        
+        .stats-bar {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 32px 48px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+            margin-top: -60px;
+            position: relative;
+            z-index: 2;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-item .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--deep-purple);
+            display: block;
+        }
+
+        .stat-item .stat-label {
+            font-size: 13px;
+            color: var(--muted-text);
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        /* ============================================
+           SECTION STYLES
+           ============================================ */
+        
+        .section {
+            padding: 80px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-label {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--berry);
+            margin-bottom: 12px;
+        }
+
+        .section-header h2 {
+            font-size: clamp(28px, 4vw, 40px);
+            color: var(--deep-purple);
+            margin-bottom: 12px;
+        }
+
+        .section-header p {
+            color: var(--muted-text);
+            font-size: 16px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* ============================================
+           NEWS CARDS
+           ============================================ */
+        
+        .section-news {
+            background: var(--off-white);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-card-top);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-image {
+            height: 180px;
+            background: var(--lavender);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-image.tournament {
+            background: linear-gradient(135deg, #451952 0%, #662549 100%);
+        }
+
+        .card-image.news {
+            background: linear-gradient(135deg, #F3EDF7 0%, #e8ddf0 100%);
+        }
+
+        .card-image.wbif {
+            background: linear-gradient(135deg, #662549 0%, #AE445A 100%);
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: var(--gold);
+            color: var(--deep-purple);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-badge.live {
+            background: var(--berry);
+            color: white;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-date {
+            font-size: 12px;
+            color: var(--muted-text);
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .card-body h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: var(--deep-purple);
+            font-family: 'DM Serif Display', serif;
+        }
+
+        .card-body p {
+            font-size: 14px;
+            color: var(--muted-text);
+            line-height: 1.6;
+        }
+
+        .card-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--berry);
+            margin-top: 12px;
+            transition: var(--transition);
+        }
+
+        .card-link:hover {
+            color: var(--gold);
+            gap: 10px;
+        }
+
+        /* ============================================
+           PLAYERS SECTION
+           ============================================ */
+        
+        .section-players {
+            background: var(--lavender);
+        }
+
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .player-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 28px 20px;
+            text-align: center;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .player-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .player-rank {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .player-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--gradient-hero);
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            border: 3px solid var(--lavender);
+            box-shadow: 0 4px 12px rgba(69, 25, 82, 0.15);
+        }
+
+        .player-card h3 {
+            font-size: 16px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--deep-purple);
+        }
+
+        .player-nick {
+            font-size: 12px;
+            color: var(--muted-text);
+            margin-bottom: 16px;
+        }
+
+        .player-stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .player-stat {
+            text-align: center;
+        }
+
+        .player-stat .stat-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--deep-purple);
+            display: block;
+        }
+
+        .player-stat .stat-label {
+            font-size: 10px;
+            color: var(--muted-text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .player-badges {
+            margin-top: 12px;
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .player-badge {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .player-badge.wbif {
+            background: rgba(69, 25, 82, 0.1);
+            color: var(--deep-purple);
+        }
+
+        .player-badge.heroes {
+            background: rgba(243, 159, 90, 0.15);
+            color: #c27a3a;
+        }
+
+        /* ============================================
+           ABOUT SECTION (dark)
+           ============================================ */
+        
+        .section-about {
+            background: var(--gradient-hero);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-about::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -100px;
+            transform: translateY(-50%);
+            width: 400px;
+            height: 400px;
+            opacity: 0.05;
+            background:
+                /* Backgammon board triangles pattern */
+                conic-gradient(from 0deg at 50% 0%, transparent 0deg, var(--gold) 0deg 30deg, transparent 30deg) repeat-x;
+            background-size: 60px 100%;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: center;
+        }
+
+        .section-about .section-label {
+            color: var(--gold);
+        }
+
+        .section-about h2 {
+            font-size: clamp(28px, 4vw, 40px);
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .section-about p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .about-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .about-feature {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius);
+            padding: 20px;
+            transition: var(--transition);
+        }
+
+        .about-feature:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .about-feature-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .about-feature h4 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .about-feature p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* ============================================
+           RESOURCES SECTION
+           ============================================ */
+        
+        .section-resources {
+            background: var(--off-white);
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .resource-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 28px;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            border-left: 4px solid transparent;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            border-left-color: var(--gold);
+        }
+
+        .resource-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        .resource-card h3 {
+            font-size: 17px;
+            color: var(--deep-purple);
+            margin-bottom: 8px;
+            font-family: 'DM Serif Display', serif;
+        }
+
+        .resource-card p {
+            font-size: 14px;
+            color: var(--muted-text);
+            line-height: 1.6;
+        }
+
+        .resource-tag {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--berry);
+            background: rgba(174, 68, 90, 0.08);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-top: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ============================================
+           CTA / COMMUNITY SECTION
+           ============================================ */
+        
+        .section-community {
+            background: var(--lavender);
+        }
+
+        .community-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .community-card {
+            border-radius: var(--radius-lg);
+            padding: 48px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .community-card.discord {
+            background: linear-gradient(135deg, #5865F2 0%, #7B68EE 100%);
+            color: white;
+        }
+
+        .community-card.newsletter {
+            background: white;
+            box-shadow: var(--shadow);
+        }
+
+        .community-card h3 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .community-card.discord h3 {
+            color: white;
+        }
+
+        .community-card.newsletter h3 {
+            color: var(--deep-purple);
+        }
+
+        .community-card p {
+            font-size: 15px;
+            margin-bottom: 24px;
+            line-height: 1.7;
+        }
+
+        .community-card.discord p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .community-card.newsletter p {
+            color: var(--muted-text);
+        }
+
+        .email-form {
+            display: flex;
+            gap: 8px;
+        }
+
+        .email-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid var(--lavender);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--lavender);
+            color: var(--dark-text);
+            transition: var(--transition);
+        }
+
+        .email-input:focus {
+            outline: none;
+            border-color: var(--berry);
+            background: white;
+        }
+
+        .email-input::placeholder {
+            color: var(--muted-text);
+        }
+
+        .btn-submit {
+            background: var(--gradient-cta);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(174, 68, 90, 0.3);
+        }
+
+        .btn-discord {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-discord:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        
+        .footer {
+            background: var(--deep-purple);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 64px 0 32px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+            margin-bottom: 48px;
+        }
+
+        .footer-brand .logo-text {
+            font-size: 18px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .footer-brand p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .footer h4 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-bottom p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .footer-bottom-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer-bottom-links a {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.3);
+            transition: var(--transition);
+        }
+
+        .footer-bottom-links a:hover {
+            color: var(--gold);
+        }
+
+        .wbif-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 16px;
+        }
+
+        .wbif-badge strong {
+            color: var(--gold);
+        }
+
+        /* ============================================
+           WAVE SVGs
+           ============================================ */
+        
+        .wave-bottom {
+            display: block;
+            margin-bottom: -1px;
+        }
+
+        .wave-top {
+            display: block;
+            margin-top: -1px;
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        
+        @media (max-width: 1024px) {
+            .cards-grid,
+            .resources-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .players-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+                padding: 24px;
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .community-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cards-grid,
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .players-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .email-form {
+                flex-direction: column;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .players-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                padding: 60px 0 100px;
+            }
+
+            .about-features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== HEADER ========== -->
+    <header class="header">
+        <div class="container">
+            <a href="#" class="logo">
+                <div class="logo-icon">🎲</div>
+                <span class="logo-text">Kotrusamband Íslands</span>
+            </a>
+            <nav class="nav">
+                <a href="#um-kotru">Um Kotru</a>
+                <a href="#felagid">Félagið</a>
+                <a href="#spilarar">Spilarar</a>
+                <a href="#mot">Mót</a>
+                <a href="#namsefni">Námsefni</a>
+            </nav>
+            <div class="nav-actions">
+                <span class="lang-toggle">IS / EN</span>
+                <button class="btn-login">Innskráning</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========== HERO ========== -->
+    <section class="hero">
+        <div class="container hero-content">
+            <div class="hero-badge">
+                <span class="hero-badge-dot"></span>
+                WBIF aðildarþjóð
+            </div>
+            <h1>Kotra á <span class="accent">Íslandi</span></h1>
+            <p>Kotrusamband Íslands heldur utan um samfélag kotruspilara, mót og fræðslu. Vertu með — hvort sem þú ert byrjandi eða vanur gæðingur.</p>
+            <div class="hero-buttons">
+                <button class="btn-primary">Skrá mig →</button>
+                <button class="btn-secondary">Skoða mót</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Wave divider -->
+    <svg class="wave-bottom" viewBox="0 0 1440 60" preserveAspectRatio="none" style="display:block; background: var(--deep-purple);">
+        <path fill="var(--off-white)" d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z"/>
+    </svg>
+
+    <!-- ========== STATS BAR ========== -->
+    <section style="background: var(--off-white); padding-bottom: 20px;">
+        <div class="container">
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-number">42</span>
+                    <span class="stat-label">Skráðir spilarar</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">8</span>
+                    <span class="stat-label">Mót á þessu ári</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">156</span>
+                    <span class="stat-label">Leikir spilaðir</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">2024</span>
+                    <span class="stat-label">WBIF aðild frá</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== NEWS & TOURNAMENTS ========== -->
+    <section class="section section-news" id="mot">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Fréttir & mót</span>
+                <h2>Hvað er að gerast?</h2>
+                <p>Nýjustu fréttir, mót og viðburðir í íslensku kotrumenningu</p>
+            </div>
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-image tournament">
+                        <span class="card-badge live">● Live</span>
+                        🏆
+                    </div>
+                    <div class="card-body">
+                        <span class="card-date">15. mars 2026</span>
+                        <h3>Íslandsmót í kotru 2026</h3>
+                        <p>Árlegt Íslandsmót hefst á næstunni. Skráning opin á WBIF.</p>
+                        <a href="#" class="card-link">Skoða mót →</a>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-image news">
+                        📰
+                    </div>
+                    <div class="card-body">
+                        <span class="card-date">1. mars 2026</span>
+                        <h3>Ný vefsíða fyrir sambandið</h3>
+                        <p>Kotrusamband Íslands hefur opnað nýja vefsíðu á kotra.is til að styrkja samfélagið.</p>
+                        <a href="#" class="card-link">Lesa meira →</a>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-image wbif">
+                        <span class="card-badge">WBIF</span>
+                        🌍
+                    </div>
+                    <div class="card-body">
+                        <span class="card-date">Febrúar 2026</span>
+                        <h3>WBIF Team World Championship</h3>
+                        <p>Ísland tekur þátt í alþjóðlega liðamótinu á BG Studio Heroes.</p>
+                        <a href="#" class="card-link">Frekari upplýsingar →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== PLAYERS ========== -->
+    <section class="section section-players" id="spilarar">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Spilarar</span>
+                <h2>Fremstu spilarar Íslands</h2>
+                <p>Röðun byggt á WBIF og innlendum mótum</p>
+            </div>
+            <div class="players-grid">
+                <div class="player-card">
+                    <span class="player-rank">#1</span>
+                    <div class="player-avatar">👤</div>
+                    <h3>Jón Sigurðsson</h3>
+                    <span class="player-nick">@jonsi_bg</span>
+                    <div class="player-stats">
+                        <div class="player-stat">
+                            <span class="stat-number">4.2</span>
+                            <span class="stat-label">PR</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="stat-number">1820</span>
+                            <span class="stat-label">Elo</span>
+                        </div>
+                    </div>
+                    <div class="player-badges">
+                        <span class="player-badge wbif">WBIF</span>
+                        <span class="player-badge heroes">Heroes</span>
+                    </div>
+                </div>
+                <div class="player-card">
+                    <span class="player-rank">#2</span>
+                    <div class="player-avatar">👤</div>
+                    <h3>Guðrún Helgadóttir</h3>
+                    <span class="player-nick">@gudrun_bg</span>
+                    <div class="player-stats">
+                        <div class="player-stat">
+                            <span class="stat-number">5.1</span>
+                            <span class="stat-label">PR</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="stat-number">1745</span>
+                            <span class="stat-label">Elo</span>
+                        </div>
+                    </div>
+                    <div class="player-badges">
+                        <span class="player-badge wbif">WBIF</span>
+                        <span class="player-badge heroes">Heroes</span>
+                    </div>
+                </div>
+                <div class="player-card">
+                    <span class="player-rank">#3</span>
+                    <div class="player-avatar">👤</div>
+                    <h3>Ólafur Björnsson</h3>
+                    <span class="player-nick">@olafur_dice</span>
+                    <div class="player-stats">
+                        <div class="player-stat">
+                            <span class="stat-number">5.8</span>
+                            <span class="stat-label">PR</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="stat-number">1690</span>
+                            <span class="stat-label">Elo</span>
+                        </div>
+                    </div>
+                    <div class="player-badges">
+                        <span class="player-badge heroes">Heroes</span>
+                    </div>
+                </div>
+                <div class="player-card">
+                    <span class="player-rank">#4</span>
+                    <div class="player-avatar">👤</div>
+                    <h3>Sigríður Jónsdóttir</h3>
+                    <span class="player-nick">@sigga_kotra</span>
+                    <div class="player-stats">
+                        <div class="player-stat">
+                            <span class="stat-number">6.3</span>
+                            <span class="stat-label">PR</span>
+                        </div>
+                        <div class="player-stat">
+                            <span class="stat-number">1650</span>
+                            <span class="stat-label">Elo</span>
+                        </div>
+                    </div>
+                    <div class="player-badges">
+                        <span class="player-badge heroes">Heroes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Wave before dark section -->
+    <svg class="wave-bottom" viewBox="0 0 1440 60" preserveAspectRatio="none" style="display:block; background: var(--lavender);">
+        <path fill="#451952" d="M0,20 C480,50 960,0 1440,20 L1440,60 L0,60 Z"/>
+    </svg>
+
+    <!-- ========== ABOUT BACKGAMMON ========== -->
+    <section class="section section-about" id="um-kotru">
+        <div class="container">
+            <div class="about-grid">
+                <div>
+                    <span class="section-label">Um Kotru</span>
+                    <h2>Einn elsti borðleikur mannkyns</h2>
+                    <p>Kotra (backgammon) er leikur sem hefur verið spilaður í yfir 5.000 ár. Hann blandar saman stefnumörkun og heppni á einstakan hátt — enginn leikur er eins.</p>
+                    <p>Á Íslandi hefur kotra verið spiluð í aldir og er hluti af menningararfleifð okkar. Kotrusambandið vinnur að því að efla leikinn og tengja spilara saman.</p>
+                    <div style="margin-top: 24px;">
+                        <button class="btn-primary">Lærðu reglurnar →</button>
+                    </div>
+                </div>
+                <div class="about-features">
+                    <div class="about-feature">
+                        <div class="about-feature-icon">🎯</div>
+                        <h4>Stefnumörkun</h4>
+                        <p>Veldu réttu leikina og vinndu á snjöllum ákvörðunum</p>
+                    </div>
+                    <div class="about-feature">
+                        <div class="about-feature-icon">🎲</div>
+                        <h4>Teningakast</h4>
+                        <p>Heppnin bætir spennu — enginn leikur er fyrirfram ákveðinn</p>
+                    </div>
+                    <div class="about-feature">
+                        <div class="about-feature-icon">🏆</div>
+                        <h4>Keppni</h4>
+                        <p>WBIF mót og Íslandsmót — mælist við besta fólkið</p>
+                    </div>
+                    <div class="about-feature">
+                        <div class="about-feature-icon">👥</div>
+                        <h4>Samfélag</h4>
+                        <p>Vinir og fjölskylda — kotra tengir kynslóðir</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Wave after dark section -->
+    <svg class="wave-top" viewBox="0 0 1440 60" preserveAspectRatio="none" style="display:block; background: #451952;">
+        <path fill="var(--off-white)" d="M0,0 L1440,0 L1440,40 C960,10 480,50 0,40 Z"/>
+    </svg>
+
+    <!-- ========== RESOURCES ========== -->
+    <section class="section section-resources" id="namsefni">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Námsefni & tenglar</span>
+                <h2>Bættu leikinn þinn</h2>
+                <p>Öpp, bækur, myndbönd og fleira til að læra og æfa kotru</p>
+            </div>
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <div class="resource-icon">📱</div>
+                    <h3>Backgammon Galaxy</h3>
+                    <p>Spilaðu á netinu gegn spilurum úr öllu heiminum. Greining á leikjum og PR-einkunn.</p>
+                    <span class="resource-tag">App / Vefsíða</span>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">📊</div>
+                    <h3>eXtreme Gammon (XG)</h3>
+                    <p>Besti greiningarhugbúnaðurinn. Greinir hverja ákvörðun og metur villur.</p>
+                    <span class="resource-tag">Hugbúnaður</span>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">📚</div>
+                    <h3>Backgammon Boot Camp</h3>
+                    <p>Frábær bók fyrir byrjendur og miðlungsspilara til að bæta grunnleikni.</p>
+                    <span class="resource-tag">Bók</span>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">🎬</div>
+                    <h3>SuperJoost á YouTube</h3>
+                    <p>Fræðslumyndbönd um kotrustefnur, cube decisions og match play.</p>
+                    <span class="resource-tag">YouTube</span>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">🌐</div>
+                    <h3>BG Studio Heroes</h3>
+                    <p>Opinberi leikjaþjónn WBIF. Öll alþjóðleg mót eru spiluð hér.</p>
+                    <span class="resource-tag">Leikjaþjónn</span>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">🏛️</div>
+                    <h3>WBIF</h3>
+                    <p>World Backgammon Internet Federation — alþjóðleg mótastjórnun og röðun.</p>
+                    <span class="resource-tag">Samtök</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== COMMUNITY / CTA ========== -->
+    <section class="section section-community">
+        <div class="container">
+            <div class="community-grid">
+                <div class="community-card discord">
+                    <h3>Vertu með á Discord</h3>
+                    <p>Spjallaðu við aðra kotruspilara, finndu andstæðinga og fylgstu með mótum. Allir velkomnir!</p>
+                    <button class="btn-discord">💬 Skoða Discord →</button>
+                </div>
+                <div class="community-card newsletter">
+                    <h3>Fréttabréf</h3>
+                    <p>Fáðu fréttir um mót, viðburði og fróðlegt efni beint í pósthólfið.</p>
+                    <form class="email-form" onsubmit="return false;">
+                        <input type="email" class="email-input" placeholder="Netfangið þitt">
+                        <button class="btn-submit">Skrá mig</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <svg class="wave-bottom" viewBox="0 0 1440 60" preserveAspectRatio="none" style="display:block; background: var(--lavender);">
+        <path fill="#451952" d="M0,30 C360,0 1080,60 1440,30 L1440,60 L0,60 Z"/>
+    </svg>
+    
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <span class="logo-text">🎲 Kotrusamband Íslands</span>
+                    <p>Eflum kotrumenningu á Íslandi — frá byrjendum til heimsmeistaramóta.</p>
+                    <div class="wbif-badge">
+                        🌍 Aðild að <strong>WBIF</strong> — World Backgammon Internet Federation
+                    </div>
+                </div>
+                <div>
+                    <h4>Flýtitenglar</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Um Kotru</a></li>
+                        <li><a href="#">Félagið</a></li>
+                        <li><a href="#">Mót</a></li>
+                        <li><a href="#">Spilarar</a></li>
+                        <li><a href="#">Námsefni</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Ytri tenglar</h4>
+                    <ul class="footer-links">
+                        <li><a href="https://www.wbif.net/" target="_blank">WBIF ↗</a></li>
+                        <li><a href="https://heroes.backgammonstudio.com/" target="_blank">BG Studio Heroes ↗</a></li>
+                        <li><a href="#" target="_blank">BG Galaxy ↗</a></li>
+                        <li><a href="#" target="_blank">Discord ↗</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Hafa samband</h4>
+                    <ul class="footer-links">
+                        <li><a href="mailto:info@kotra.is">info@kotra.is</a></li>
+                        <li><a href="#">Discord</a></li>
+                        <li><a href="#">Facebook</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Kotrusamband Íslands. Öll réttindi áskilin.</p>
+                <div class="footer-bottom-links">
+                    <a href="#">Persónuverndarstefna</a>
+                    <a href="#">Skilmálar</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

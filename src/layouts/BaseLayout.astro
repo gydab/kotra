@@ -1,0 +1,123 @@
+---
+import type { Locale } from '@i18n/index';
+import { t } from '@i18n/index';
+
+interface Props {
+  title?: string;
+  description?: string;
+  locale?: Locale;
+}
+
+const { locale = 'is' } = Astro.props;
+const i = t(locale);
+const title = Astro.props.title ?? i.site.title;
+const description = Astro.props.description ?? i.site.description;
+const otherLocale = locale === 'is' ? 'en' : 'is';
+---
+
+<!DOCTYPE html>
+<html lang={locale}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  <title>{title}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="min-h-screen">
+  <!-- Header -->
+  <header class="gradient-hero sticky top-0 z-50 backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href={`/${locale}`} class="flex items-center gap-3">
+        <div class="w-10 h-10 gradient-cta rounded-[10px] flex items-center justify-center text-xl">🎲</div>
+        <span class="text-white font-heading text-xl" style="font-family: var(--font-heading);">{i.site.title}</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8">
+        <a href={`/${locale}#um-kotru`} class="nav-link relative text-white/80 text-sm font-medium hover:text-white transition-colors">{i.nav.about}</a>
+        <a href={`/${locale}#felagid`} class="nav-link relative text-white/80 text-sm font-medium hover:text-white transition-colors">{i.nav.association}</a>
+        <a href={`/${locale}#spilarar`} class="nav-link relative text-white/80 text-sm font-medium hover:text-white transition-colors">{i.nav.players}</a>
+        <a href={`/${locale}#mot`} class="nav-link relative text-white/80 text-sm font-medium hover:text-white transition-colors">{i.nav.tournaments}</a>
+        <a href={`/${locale}#namsefni`} class="nav-link relative text-white/80 text-sm font-medium hover:text-white transition-colors">{i.nav.resources}</a>
+        <a href={`/${locale}/spila`} class="nav-link relative text-white/80 text-sm font-medium hover:text-white transition-colors">{i.nav.play}</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <a href={`/${otherLocale}`} class="text-white/60 text-xs font-semibold px-2.5 py-1 border border-white/20 rounded-md hover:border-white/50 hover:text-white transition-all">
+          {locale === 'is' ? 'EN' : 'IS'}
+        </a>
+        <button class="bg-white/10 text-white px-5 py-2 rounded-lg text-sm font-semibold border border-white/20 hover:bg-white/20 transition-all">
+          {i.nav.login}
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <slot />
+  </main>
+
+  <!-- Footer -->
+  <svg viewBox="0 0 1440 60" preserveAspectRatio="none" class="block w-full h-[60px] bg-lavender">
+    <path fill="#451952" d="M0,30 C360,0 1080,60 1440,30 L1440,60 L0,60 Z"/>
+  </svg>
+
+  <footer class="bg-deep-purple text-white/70 pt-16 pb-8">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <div>
+          <span class="text-white text-lg block mb-3" style="font-family: var(--font-heading);">🎲 {i.site.title}</span>
+          <p class="text-sm text-white/50 leading-relaxed">{i.footer.tagline}</p>
+          <div class="mt-4 inline-flex items-center gap-2 bg-white/5 border border-white/10 px-3.5 py-2 rounded-lg text-xs text-white/50">
+            🌍 <strong class="text-gold">{i.footer.wbif}</strong>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gold mb-5">{i.footer.quickLinks}</h4>
+          <ul class="space-y-2.5">
+            <li><a href="#" class="text-sm text-white/50 hover:text-white transition-colors">{i.nav.about}</a></li>
+            <li><a href="#" class="text-sm text-white/50 hover:text-white transition-colors">{i.nav.association}</a></li>
+            <li><a href="#" class="text-sm text-white/50 hover:text-white transition-colors">{i.nav.tournaments}</a></li>
+            <li><a href="#" class="text-sm text-white/50 hover:text-white transition-colors">{i.nav.players}</a></li>
+            <li><a href="#" class="text-sm text-white/50 hover:text-white transition-colors">{i.nav.resources}</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gold mb-5">{i.footer.externalLinks}</h4>
+          <ul class="space-y-2.5">
+            <li><a href="https://www.wbif.net/" target="_blank" class="text-sm text-white/50 hover:text-white transition-colors">WBIF ↗</a></li>
+            <li><a href="https://heroes.backgammonstudio.com/" target="_blank" class="text-sm text-white/50 hover:text-white transition-colors">BG Studio Heroes ↗</a></li>
+            <li><a href="#" class="text-sm text-white/50 hover:text-white transition-colors">BG Galaxy ↗</a></li>
+            <li><a href="#" class="text-sm text-white/50 hover:text-white transition-colors">Discord ↗</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gold mb-5">{i.footer.contact}</h4>
+          <ul class="space-y-2.5">
+            <li><a href="mailto:info@kotra.is" class="text-sm text-white/50 hover:text-white transition-colors">info@kotra.is</a></li>
+            <li><a href="#" class="text-sm text-white/50 hover:text-white transition-colors">Discord</a></li>
+            <li><a href="#" class="text-sm text-white/50 hover:text-white transition-colors">Facebook</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="border-t border-white/8 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <p class="text-xs text-white/30">{i.footer.copyright}</p>
+        <div class="flex gap-6">
+          <a href="#" class="text-xs text-white/30 hover:text-gold transition-colors">{i.footer.privacy}</a>
+          <a href="#" class="text-xs text-white/30 hover:text-gold transition-colors">{i.footer.terms}</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
+
+<style is:global>
+  @import '../styles/global.css';
+</style>

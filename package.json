@@ -1,0 +1,26 @@
+{
+  "name": "kotra",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Kotrusamband Íslands — kotra.is",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "test": "vitest run --watch=false"
+  },
+  "dependencies": {
+    "@astrojs/node": "^9.5.4",
+    "@astrojs/svelte": "^7.0.0",
+    "@supabase/supabase-js": "^2.49.0",
+    "astro": "^5.7.0",
+    "svelte": "^5.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.8.0",
+    "vitest": "^2.1.4"
+  }
+}

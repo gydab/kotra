@@ -1,0 +1,82 @@
+{
+  "site": {
+    "title": "Kotrusamband Íslands",
+    "description": "Kotrusamband Íslands heldur utan um samfélag kotruspilara, mót og fræðslu."
+  },
+  "nav": {
+    "about": "Um Kotru",
+    "association": "Félagið",
+    "players": "Spilarar",
+    "tournaments": "Mót",
+    "resources": "Námsefni",
+    "play": "Spila",
+    "login": "Innskráning"
+  },
+  "hero": {
+    "badge": "WBIF aðildarþjóð",
+    "title": "Kotra á",
+    "titleAccent": "Íslandi",
+    "subtitle": "Kotrusamband Íslands heldur utan um samfélag kotruspilara, mót og fræðslu. Vertu með — hvort sem þú ert byrjandi eða vanur gæðingur.",
+    "cta": "Skrá mig",
+    "ctaSecondary": "Skoða mót"
+  },
+  "stats": {
+    "players": "Skráðir spilarar",
+    "tournaments": "Mót á þessu ári",
+    "matches": "Leikir spilaðir",
+    "wbif": "WBIF aðild frá"
+  },
+  "sections": {
+    "news": {
+      "label": "Fréttir & mót",
+      "title": "Hvað er að gerast?",
+      "subtitle": "Nýjustu fréttir, mót og viðburðir í íslensku kotrumenningu"
+    },
+    "players": {
+      "label": "Spilarar",
+      "title": "Fremstu spilarar Íslands",
+      "subtitle": "Röðun byggt á WBIF og innlendum mótum"
+    },
+    "about": {
+      "label": "Um Kotru",
+      "title": "Einn elsti borðleikur mannkyns",
+      "p1": "Kotra (backgammon) er leikur sem hefur verið spilaður í yfir 5.000 ár. Hann blandar saman stefnumörkun og heppni á einstakan hátt — enginn leikur er eins.",
+      "p2": "Á Íslandi hefur kotra verið spiluð í aldir og er hluti af menningararfleifð okkar. Kotrusambandið vinnur að því að efla leikinn og tengja spilara saman.",
+      "cta": "Lærðu reglurnar"
+    },
+    "features": {
+      "strategy": { "title": "Stefnumörkun", "desc": "Veldu réttu leikina og vinndu á snjöllum ákvörðunum" },
+      "dice": { "title": "Teningakast", "desc": "Heppnin bætir spennu — enginn leikur er fyrirfram ákveðinn" },
+      "compete": { "title": "Keppni", "desc": "WBIF mót og Íslandsmót — mælist við besta fólkið" },
+      "community": { "title": "Samfélag", "desc": "Vinir og fjölskylda — kotra tengir kynslóðir" }
+    },
+    "resources": {
+      "label": "Námsefni & tenglar",
+      "title": "Bættu leikinn þinn",
+      "subtitle": "Öpp, bækur, myndbönd og fleira til að læra og æfa kotru"
+    }
+  },
+  "community": {
+    "discord": {
+      "title": "Vertu með á Discord",
+      "desc": "Spjallaðu við aðra kotruspilara, finndu andstæðinga og fylgstu með mótum. Allir velkomnir!",
+      "cta": "Skoða Discord"
+    },
+    "newsletter": {
+      "title": "Fréttabréf",
+      "desc": "Fáðu fréttir um mót, viðburði og fróðlegt efni beint í pósthólfið.",
+      "placeholder": "Netfangið þitt",
+      "cta": "Skrá mig"
+    }
+  },
+  "footer": {
+    "tagline": "Eflum kotrumenningu á Íslandi — frá byrjendum til heimsmeistaramóta.",
+    "wbif": "Aðild að WBIF — World Backgammon Internet Federation",
+    "quickLinks": "Flýtitenglar",
+    "externalLinks": "Ytri tenglar",
+    "contact": "Hafa samband",
+    "privacy": "Persónuverndarstefna",
+    "terms": "Skilmálar",
+    "copyright": "© 2026 Kotrusamband Íslands. Öll réttindi áskilin."
+  }
+}

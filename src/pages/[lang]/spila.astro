@@ -1,0 +1,96 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import type { Locale } from '@i18n/index';
+import { locales } from '@i18n/index';
+import BackgammonBoard from '@components/islands/BackgammonBoard.svelte';
+
+export function getStaticPaths() {
+  return locales.map((locale) => ({
+    params: { lang: locale },
+  }));
+}
+
+const { lang } = Astro.params as { lang: Locale };
+
+const titles: Record<Locale, string> = {
+  is: 'Spila kotratefli — Kotrusambandið',
+  en: 'Play backgammon — Kotrusambandið',
+};
+
+const descriptions: Record<Locale, string> = {
+  is: 'Spilaðu kotratefli gegn tölvu. Veldu erfiðleikastig og byrjaðu leik.',
+  en: 'Play backgammon against the computer. Choose your difficulty and start a game.',
+};
+
+const labels: Record<Locale, Record<string, any>> = {
+  is: {
+    heading: 'Spila kotratefli',
+    sub: 'Spilaðu gegn tölvunni — smelltu á stein til að færa hann',
+    easy: 'Auðvelt',
+    medium: 'Miðlungs',
+    hard: 'Erfitt',
+    diffLabel: 'Erfiðleiki:',
+    rulesTitle: 'Leikreglur',
+    rules: [
+      'Ýttu á 🎲 til að kasta teningum.',
+      'Smelltu á stein til að færa hann — hann færist sjálfkrafa um virka teninginn.',
+      'Smelltu á teningana til að skipta um röð (nota lægri töluna fyrst).',
+      'Tölvan sýnir teningana hægra megin (þínar) og vinstra megin (hennar).',
+      'Þú verður að nota bæði teningana ef mögulegt er.',
+      'Steinar á barnum verða að komast inn fyrst.',
+      'Þú má bera af (setja út af) þegar allir steinar þínir eru í heimasvæðinu — bakki ljómar þá gyllt.',
+      'Tvöföldunar-kubbur: ýttu á ×2 til að tvöfalda; tölvan ákveður hvort hún tekur.',
+    ],
+  },
+  en: {
+    heading: 'Play backgammon',
+    sub: 'Play against the computer — click a checker to move it',
+    easy: 'Easy',
+    medium: 'Medium',
+    hard: 'Hard',
+    diffLabel: 'Difficulty:',
+    rulesTitle: 'Rules',
+    rules: [
+      'Click 🎲 to roll the dice.',
+      'Click a checker to auto-move it using the active die.',
+      'Click the dice to swap their order (use the smaller die first).',
+      'Your dice appear on the right, the computer\'s on the left.',
+      'You must use both dice if possible.',
+      'Checkers on the bar must enter first.',
+      'You may bear off once all your checkers are in your home board — the tray glows gold.',
+      'Doubling cube: press ×2 to double; the computer decides whether to take.',
+    ],
+  },
+};
+
+const l = labels[lang];
+---
+
+<BaseLayout locale={lang} title={titles[lang]} description={descriptions[lang]}>
+  <section class="gradient-hero pt-24 pb-12 text-center">
+    <div class="max-w-3xl mx-auto px-6">
+      <h1 class="text-4xl md:text-5xl text-white mb-3 tracking-tight" style="font-family: var(--font-heading);">
+        {l.heading}
+      </h1>
+      <p class="text-white/70 text-lg">{l.sub}</p>
+    </div>
+  </section>
+
+  <section class="bg-[#1a0f1f] py-8 px-4 min-h-[60vh]">
+    <div class="max-w-[980px] mx-auto">
+
+      <!-- Svelte island -->
+      <BackgammonBoard client:load difficulty="hard" humanColor="white" />
+
+      <!-- Quick rules -->
+      <details class="mt-8 bg-white/5 rounded-xl p-6 text-white/70 text-sm max-w-[760px] mx-auto">
+        <summary class="font-semibold text-white cursor-pointer text-base mb-3">{l.rulesTitle}</summary>
+        <ol class="list-decimal list-inside space-y-1">
+          {l.rules.map((rule: string) => (
+            <li>{rule}</li>
+          ))}
+        </ol>
+      </details>
+    </div>
+  </section>
+</BaseLayout>

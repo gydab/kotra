@@ -1,0 +1,278 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import type { Locale } from '@i18n/index';
+import { t, locales } from '@i18n/index';
+
+export function getStaticPaths() {
+  return locales.map((locale) => ({
+    params: { lang: locale },
+  }));
+}
+
+const { lang } = Astro.params as { lang: Locale };
+const i = t(lang);
+---
+
+<BaseLayout locale={lang}>
+  <!-- ========== HERO ========== -->
+  <section class="gradient-hero pt-24 pb-36 relative overflow-hidden text-center">
+    <!-- Glow orbs -->
+    <div class="absolute -top-1/2 -right-1/5 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(174,68,90,0.15)_0%,transparent_70%)] rounded-full"></div>
+    <div class="absolute -bottom-1/3 -left-1/10 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(243,159,90,0.1)_0%,transparent_70%)] rounded-full"></div>
+
+    <div class="relative z-10 max-w-3xl mx-auto px-6">
+      <!-- Badge -->
+      <div class="inline-flex items-center gap-2 bg-white/10 border border-white/15 px-4 py-1.5 rounded-full text-white/70 text-xs font-medium mb-8 backdrop-blur-sm">
+        <span class="w-1.5 h-1.5 bg-gold rounded-full animate-pulse-dot"></span>
+        {i.hero.badge}
+      </div>
+
+      <h1 class="text-5xl md:text-7xl text-white mb-5 tracking-tight" style="font-family: var(--font-heading);">
+        {i.hero.title} <span class="text-gradient">{i.hero.titleAccent}</span>
+      </h1>
+
+      <p class="text-white/70 text-lg max-w-xl mx-auto mb-10 leading-relaxed">
+        {i.hero.subtitle}
+      </p>
+
+      <div class="flex gap-4 justify-center flex-wrap">
+        <button class="gradient-cta text-white px-8 py-3.5 rounded-xl text-sm font-semibold shadow-[0_4px_15px_rgba(174,68,90,0.3)] hover:shadow-[0_6px_20px_rgba(174,68,90,0.4)] hover:-translate-y-0.5 transition-all">
+          {i.hero.cta} →
+        </button>
+        <button class="bg-white/10 text-white px-8 py-3.5 rounded-xl text-sm font-semibold border border-white/20 hover:bg-white/15 hover:border-white/40 hover:-translate-y-0.5 transition-all">
+          {i.hero.ctaSecondary}
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wave -->
+  <svg viewBox="0 0 1440 60" preserveAspectRatio="none" class="block w-full h-[60px]" style="background: #451952; margin-bottom: -1px;">
+    <path fill="#FAF5F0" d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z"/>
+  </svg>
+
+  <!-- ========== STATS BAR ========== -->
+  <section class="bg-off-white pb-5">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="bg-white rounded-2xl p-8 md:p-10 grid grid-cols-2 md:grid-cols-4 gap-8 -mt-16 relative z-10 shadow-[0_4px_20px_rgba(69,25,82,0.08)]">
+        <div class="text-center">
+          <span class="text-4xl font-bold text-deep-purple block" style="font-family: var(--font-mono);">42</span>
+          <span class="text-xs text-muted-text font-medium mt-1">{i.stats.players}</span>
+        </div>
+        <div class="text-center">
+          <span class="text-4xl font-bold text-deep-purple block" style="font-family: var(--font-mono);">8</span>
+          <span class="text-xs text-muted-text font-medium mt-1">{i.stats.tournaments}</span>
+        </div>
+        <div class="text-center">
+          <span class="text-4xl font-bold text-deep-purple block" style="font-family: var(--font-mono);">156</span>
+          <span class="text-xs text-muted-text font-medium mt-1">{i.stats.matches}</span>
+        </div>
+        <div class="text-center">
+          <span class="text-4xl font-bold text-deep-purple block" style="font-family: var(--font-mono);">2024</span>
+          <span class="text-xs text-muted-text font-medium mt-1">{i.stats.wbif}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== NEWS & TOURNAMENTS ========== -->
+  <section class="bg-off-white py-20" id="mot">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-12">
+        <span class="text-xs font-bold uppercase tracking-[2px] text-berry mb-3 block">{i.sections.news.label}</span>
+        <h2 class="text-3xl md:text-4xl text-deep-purple mb-3" style="font-family: var(--font-heading);">{i.sections.news.title}</h2>
+        <p class="text-muted-text text-base max-w-lg mx-auto">{i.sections.news.subtitle}</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Tournament Card -->
+        <div class="card-hover card-top-border relative bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(69,25,82,0.08)]">
+          <div class="h-44 gradient-hero flex items-center justify-center text-5xl relative">
+            <span class="absolute top-3 left-3 bg-berry text-white text-[11px] font-bold px-2.5 py-1 rounded-md uppercase">● Live</span>
+            🏆
+          </div>
+          <div class="p-5">
+            <span class="text-xs text-muted-text font-medium">15. mars 2026</span>
+            <h3 class="text-lg text-deep-purple mt-2 mb-2" style="font-family: var(--font-heading);">Íslandsmót í kotru 2026</h3>
+            <p class="text-sm text-muted-text leading-relaxed">Árlegt Íslandsmót hefst á næstunni. Skráning opin á WBIF.</p>
+            <a href="#" class="inline-flex items-center gap-1.5 text-xs font-semibold text-berry mt-3 hover:text-gold hover:gap-2.5 transition-all">Skoða mót →</a>
+          </div>
+        </div>
+
+        <!-- News Card -->
+        <div class="card-hover card-top-border relative bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(69,25,82,0.08)]">
+          <div class="h-44 bg-lavender flex items-center justify-center text-5xl">📰</div>
+          <div class="p-5">
+            <span class="text-xs text-muted-text font-medium">1. mars 2026</span>
+            <h3 class="text-lg text-deep-purple mt-2 mb-2" style="font-family: var(--font-heading);">Ný vefsíða fyrir sambandið</h3>
+            <p class="text-sm text-muted-text leading-relaxed">Kotrusamband Íslands hefur opnað nýja vefsíðu á kotra.is til að styrkja samfélagið.</p>
+            <a href="#" class="inline-flex items-center gap-1.5 text-xs font-semibold text-berry mt-3 hover:text-gold hover:gap-2.5 transition-all">Lesa meira →</a>
+          </div>
+        </div>
+
+        <!-- WBIF Card -->
+        <div class="card-hover card-top-border relative bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(69,25,82,0.08)]">
+          <div class="h-44 bg-gradient-to-br from-warm-plum to-berry flex items-center justify-center text-5xl relative">
+            <span class="absolute top-3 left-3 bg-gold text-deep-purple text-[11px] font-bold px-2.5 py-1 rounded-md uppercase">WBIF</span>
+            🌍
+          </div>
+          <div class="p-5">
+            <span class="text-xs text-muted-text font-medium">Febrúar 2026</span>
+            <h3 class="text-lg text-deep-purple mt-2 mb-2" style="font-family: var(--font-heading);">WBIF Team World Championship</h3>
+            <p class="text-sm text-muted-text leading-relaxed">Ísland tekur þátt í alþjóðlega liðamótinu á BG Studio Heroes.</p>
+            <a href="#" class="inline-flex items-center gap-1.5 text-xs font-semibold text-berry mt-3 hover:text-gold hover:gap-2.5 transition-all">Frekari upplýsingar →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== PLAYERS ========== -->
+  <section class="bg-lavender py-20" id="spilarar">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-12">
+        <span class="text-xs font-bold uppercase tracking-[2px] text-berry mb-3 block">{i.sections.players.label}</span>
+        <h2 class="text-3xl md:text-4xl text-deep-purple mb-3" style="font-family: var(--font-heading);">{i.sections.players.title}</h2>
+        <p class="text-muted-text text-base max-w-lg mx-auto">{i.sections.players.subtitle}</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { name: 'Jón Sigurðsson', nick: '@jonsi_bg', pr: '4.2', elo: '1820', rank: 1, badges: ['WBIF', 'Heroes'] },
+          { name: 'Guðrún Helgadóttir', nick: '@gudrun_bg', pr: '5.1', elo: '1745', rank: 2, badges: ['WBIF', 'Heroes'] },
+          { name: 'Ólafur Björnsson', nick: '@olafur_dice', pr: '5.8', elo: '1690', rank: 3, badges: ['Heroes'] },
+          { name: 'Sigríður Jónsdóttir', nick: '@sigga_kotra', pr: '6.3', elo: '1650', rank: 4, badges: ['Heroes'] },
+        ].map((player) => (
+          <div class="card-hover bg-white rounded-xl p-7 text-center shadow-[0_4px_20px_rgba(69,25,82,0.08)] relative">
+            <span class="absolute top-3 right-3 text-gold text-sm font-bold" style="font-family: var(--font-mono);">#{player.rank}</span>
+            <div class="w-20 h-20 rounded-full gradient-hero mx-auto mb-4 flex items-center justify-center text-3xl text-white border-3 border-lavender shadow-[0_4px_12px_rgba(69,25,82,0.15)]">
+              👤
+            </div>
+            <h3 class="text-base font-semibold text-deep-purple">{player.name}</h3>
+            <span class="text-xs text-muted-text block mb-4">{player.nick}</span>
+            <div class="flex justify-center gap-5 mb-3">
+              <div class="text-center">
+                <span class="text-lg font-bold text-deep-purple block" style="font-family: var(--font-mono);">{player.pr}</span>
+                <span class="text-[10px] text-muted-text uppercase tracking-wider font-semibold">PR</span>
+              </div>
+              <div class="text-center">
+                <span class="text-lg font-bold text-deep-purple block" style="font-family: var(--font-mono);">{player.elo}</span>
+                <span class="text-[10px] text-muted-text uppercase tracking-wider font-semibold">Elo</span>
+              </div>
+            </div>
+            <div class="flex gap-1.5 justify-center flex-wrap">
+              {player.badges.map((badge) => (
+                <span class={`text-[10px] px-2 py-0.5 rounded font-semibold ${
+                  badge === 'WBIF' ? 'bg-deep-purple/10 text-deep-purple' : 'bg-gold/15 text-amber-700'
+                }`}>{badge}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Wave before dark section -->
+  <svg viewBox="0 0 1440 60" preserveAspectRatio="none" class="block w-full h-[60px] bg-lavender">
+    <path fill="#451952" d="M0,20 C480,50 960,0 1440,20 L1440,60 L0,60 Z"/>
+  </svg>
+
+  <!-- ========== ABOUT BACKGAMMON ========== -->
+  <section class="gradient-hero py-20 text-white relative overflow-hidden" id="um-kotru">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-[2px] text-gold mb-3 block">{i.sections.about.label}</span>
+          <h2 class="text-3xl md:text-4xl text-white mb-5" style="font-family: var(--font-heading);">{i.sections.about.title}</h2>
+          <p class="text-white/70 leading-relaxed mb-4">{i.sections.about.p1}</p>
+          <p class="text-white/70 leading-relaxed mb-6">{i.sections.about.p2}</p>
+          <button class="gradient-cta text-white px-8 py-3.5 rounded-xl text-sm font-semibold shadow-[0_4px_15px_rgba(174,68,90,0.3)] hover:shadow-[0_6px_20px_rgba(174,68,90,0.4)] hover:-translate-y-0.5 transition-all">
+            {i.sections.about.cta} →
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          {[
+            { icon: '🎯', ...i.sections.features.strategy },
+            { icon: '🎲', ...i.sections.features.dice },
+            { icon: '🏆', ...i.sections.features.compete },
+            { icon: '👥', ...i.sections.features.community },
+          ].map((feat) => (
+            <div class="bg-white/[0.06] border border-white/[0.08] rounded-xl p-5 hover:bg-white/10 hover:border-white/15 transition-all">
+              <div class="text-3xl mb-2.5">{feat.icon}</div>
+              <h4 class="text-sm font-semibold text-white mb-1">{feat.title}</h4>
+              <p class="text-xs text-white/50 leading-relaxed">{feat.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wave after dark section -->
+  <svg viewBox="0 0 1440 60" preserveAspectRatio="none" class="block w-full h-[60px]" style="background: #451952;">
+    <path fill="#FAF5F0" d="M0,0 L1440,0 L1440,40 C960,10 480,50 0,40 Z"/>
+  </svg>
+
+  <!-- ========== RESOURCES ========== -->
+  <section class="bg-off-white py-20" id="namsefni">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-12">
+        <span class="text-xs font-bold uppercase tracking-[2px] text-berry mb-3 block">{i.sections.resources.label}</span>
+        <h2 class="text-3xl md:text-4xl text-deep-purple mb-3" style="font-family: var(--font-heading);">{i.sections.resources.title}</h2>
+        <p class="text-muted-text text-base max-w-lg mx-auto">{i.sections.resources.subtitle}</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[
+          { icon: '📱', title: 'Backgammon Galaxy', desc: 'Spilaðu á netinu gegn spilurum úr öllu heiminum. Greining á leikjum og PR-einkunn.', tag: 'App / Vefsíða' },
+          { icon: '📊', title: 'eXtreme Gammon (XG)', desc: 'Besti greiningarhugbúnaðurinn. Greinir hverja ákvörðun og metur villur.', tag: 'Hugbúnaður' },
+          { icon: '📚', title: 'Backgammon Boot Camp', desc: 'Frábær bók fyrir byrjendur og miðlungsspilara til að bæta grunnleikni.', tag: 'Bók' },
+          { icon: '🎬', title: 'SuperJoost á YouTube', desc: 'Fræðslumyndbönd um kotrustefnur, cube decisions og match play.', tag: 'YouTube' },
+          { icon: '🌐', title: 'BG Studio Heroes', desc: 'Opinberi leikjaþjónn WBIF. Öll alþjóðleg mót eru spiluð hér.', tag: 'Leikjaþjónn' },
+          { icon: '🏛️', title: 'WBIF', desc: 'World Backgammon Internet Federation — alþjóðleg mótastjórnun og röðun.', tag: 'Samtök' },
+        ].map((res) => (
+          <div class="card-hover bg-white rounded-xl p-7 shadow-[0_4px_20px_rgba(69,25,82,0.08)] border-l-4 border-l-transparent hover:border-l-gold">
+            <div class="text-3xl mb-4">{res.icon}</div>
+            <h3 class="text-[17px] text-deep-purple mb-2" style="font-family: var(--font-heading);">{res.title}</h3>
+            <p class="text-sm text-muted-text leading-relaxed">{res.desc}</p>
+            <span class="inline-block text-[11px] font-semibold text-berry bg-berry/8 px-2.5 py-1 rounded mt-3 uppercase tracking-wide">{res.tag}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== COMMUNITY / CTA ========== -->
+  <section class="bg-lavender py-20">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Discord -->
+        <div class="rounded-2xl p-12 bg-gradient-to-br from-[#5865F2] to-[#7B68EE] text-white">
+          <h3 class="text-2xl mb-3" style="font-family: var(--font-heading);">{i.community.discord.title}</h3>
+          <p class="text-white/80 text-base mb-6 leading-relaxed">{i.community.discord.desc}</p>
+          <button class="bg-white/20 text-white px-7 py-3.5 rounded-xl text-sm font-semibold border border-white/30 hover:bg-white/30 hover:-translate-y-0.5 transition-all">
+            💬 {i.community.discord.cta} →
+          </button>
+        </div>
+
+        <!-- Newsletter -->
+        <div class="rounded-2xl p-12 bg-white shadow-[0_4px_20px_rgba(69,25,82,0.08)]">
+          <h3 class="text-2xl text-deep-purple mb-3" style="font-family: var(--font-heading);">{i.community.newsletter.title}</h3>
+          <p class="text-muted-text text-base mb-6 leading-relaxed">{i.community.newsletter.desc}</p>
+          <form class="flex flex-col sm:flex-row gap-2" onsubmit="return false;">
+            <input
+              type="email"
+              placeholder={i.community.newsletter.placeholder}
+              class="flex-1 px-4 py-3 border-2 border-lavender rounded-xl text-sm bg-lavender text-dark-text focus:outline-none focus:border-berry focus:bg-white transition-all placeholder:text-muted-text"
+            />
+            <button class="gradient-cta text-white px-6 py-3 rounded-xl text-sm font-semibold hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(174,68,90,0.3)] transition-all whitespace-nowrap">
+              {i.community.newsletter.cta}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

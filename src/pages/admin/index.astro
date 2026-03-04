@@ -1,0 +1,100 @@
+---
+export const prerender = false;
+
+import AdminLayout from '@layouts/AdminLayout.astro';
+import { requireAdmin } from '@lib/admin-auth';
+import { supabase } from '@lib/supabase';
+
+const user = await requireAdmin(Astro);
+
+// Fetch counts for dashboard
+const [newsRes, playersRes, tournamentsRes, subscribersRes] = await Promise.all([
+  supabase.from('news').select('id', { count: 'exact', head: true }),
+  supabase.from('players').select('id', { count: 'exact', head: true }),
+  supabase.from('tournaments').select('id', { count: 'exact', head: true }),
+  supabase.from('newsletter_subscribers').select('id', { count: 'exact', head: true }),
+]);
+
+const stats = [
+  { label: 'Fréttir', count: newsRes.count ?? 0, icon: '📰', href: '/admin/frettir', color: 'bg-blue-50 text-blue-700' },
+  { label: 'Spilarar', count: playersRes.count ?? 0, icon: '👤', href: '/admin/spilarar', color: 'bg-green-50 text-green-700' },
+  { label: 'Mót', count: tournamentsRes.count ?? 0, icon: '🏆', href: '/admin/mot', color: 'bg-yellow-50 text-yellow-700' },
+  { label: 'Áskrifendur', count: subscribersRes.count ?? 0, icon: '📧', href: '/admin/postlisti', color: 'bg-purple-50 text-purple-700' },
+];
+
+// Fetch recent news
+const { data: recentNews } = await supabase
+  .from('news')
+  .select('id, title_is, published, published_date')
+  .order('created_at', { ascending: false })
+  .limit(5);
+---
+
+<AdminLayout title="Yfirlit" user={user} activeSection="dashboard">
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-gray-900">Velkomin, {user.display_name || user.email}</h1>
+    <p class="text-gray-500 text-sm mt-1">Yfirlit yfir kotra.is efnisstjórnun</p>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+    {stats.map((stat) => (
+      <a href={stat.href} class="admin-card p-5 hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between mb-3">
+          <span class={`w-10 h-10 rounded-lg flex items-center justify-center text-lg ${stat.color}`}>
+            {stat.icon}
+          </span>
+        </div>
+        <p class="text-2xl font-bold text-gray-900">{stat.count}</p>
+        <p class="text-sm text-gray-500">{stat.label}</p>
+      </a>
+    ))}
+  </div>
+
+  <!-- Recent News -->
+  <div class="admin-card p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-semibold text-gray-900">Nýlegar fréttir</h2>
+      <a href="/admin/frettir/ny" class="admin-btn-primary text-xs">+ Ný frétt</a>
+    </div>
+
+    {recentNews && recentNews.length > 0 ? (
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Titill</th>
+            <th>Staða</th>
+            <th>Dagsetning</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {recentNews.map((item) => (
+            <tr>
+              <td class="font-medium text-gray-900">{item.title_is || '(enginn titill)'}</td>
+              <td>
+                {item.published ? (
+                  <span class="admin-badge-green">Birt</span>
+                ) : (
+                  <span class="admin-badge-yellow">Drög</span>
+                )}
+              </td>
+              <td class="text-gray-500">
+                {item.published_date
+                  ? new Date(item.published_date).toLocaleDateString('is-IS')
+                  : '—'}
+              </td>
+              <td>
+                <a href={`/admin/frettir/${item.id}`} class="text-deep-purple text-sm hover:underline">
+                  Breyta
+                </a>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    ) : (
+      <p class="text-gray-400 text-sm py-8 text-center">Engar fréttir enn. Búðu til þá fyrstu!</p>
+    )}
+  </div>
+</AdminLayout>

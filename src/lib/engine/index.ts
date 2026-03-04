@@ -1,0 +1,32 @@
+export { BackgammonGame } from './game';
+export type {
+  Player,
+  GameState,
+  SingleMove,
+  DiceRoll,
+  Die,
+  GameResult,
+  CubeState,
+  PointState,
+  Turn,
+  WinType,
+  GamePhase,
+  PointIndex,
+} from './types';
+export {
+  opponent,
+  rollDice,
+  expandDice,
+  barFor,
+  offFor,
+  homeRange,
+  direction,
+  BAR_WHITE,
+  BAR_BLACK,
+  OFF_WHITE,
+  OFF_BLACK,
+  createInitialGameState,
+  createInitialPoints,
+  CHECKERS_PER_PLAYER,
+  NUM_POINTS,
+} from './types';

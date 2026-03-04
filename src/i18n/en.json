@@ -1,0 +1,82 @@
+{
+  "site": {
+    "title": "Icelandic Backgammon Association",
+    "description": "The Icelandic Backgammon Association manages the community of backgammon players, tournaments and education."
+  },
+  "nav": {
+    "about": "About",
+    "association": "Association",
+    "players": "Players",
+    "tournaments": "Tournaments",
+    "resources": "Resources",
+    "play": "Play",
+    "login": "Sign In"
+  },
+  "hero": {
+    "badge": "WBIF Member Nation",
+    "title": "Backgammon in",
+    "titleAccent": "Iceland",
+    "subtitle": "The Icelandic Backgammon Association manages the community of players, tournaments and education. Join us — whether you're a beginner or a seasoned player.",
+    "cta": "Sign Up",
+    "ctaSecondary": "View Tournaments"
+  },
+  "stats": {
+    "players": "Registered Players",
+    "tournaments": "Tournaments This Year",
+    "matches": "Matches Played",
+    "wbif": "WBIF Member Since"
+  },
+  "sections": {
+    "news": {
+      "label": "News & Tournaments",
+      "title": "What's Happening?",
+      "subtitle": "Latest news, tournaments and events in Icelandic backgammon"
+    },
+    "players": {
+      "label": "Players",
+      "title": "Top Icelandic Players",
+      "subtitle": "Rankings based on WBIF and national tournaments"
+    },
+    "about": {
+      "label": "About Backgammon",
+      "title": "One of the Oldest Board Games",
+      "p1": "Backgammon has been played for over 5,000 years. It uniquely combines strategy and luck — no two games are ever the same.",
+      "p2": "In Iceland, backgammon (kotra) has been played for centuries and is part of our cultural heritage. The association works to grow the game and connect players.",
+      "cta": "Learn the Rules"
+    },
+    "features": {
+      "strategy": { "title": "Strategy", "desc": "Make the right moves and win through smart decisions" },
+      "dice": { "title": "Dice", "desc": "Luck adds excitement — no game is predetermined" },
+      "compete": { "title": "Competition", "desc": "WBIF and national tournaments — compete with the best" },
+      "community": { "title": "Community", "desc": "Friends and family — backgammon connects generations" }
+    },
+    "resources": {
+      "label": "Resources & Links",
+      "title": "Improve Your Game",
+      "subtitle": "Apps, books, videos and more to learn and practice backgammon"
+    }
+  },
+  "community": {
+    "discord": {
+      "title": "Join Us on Discord",
+      "desc": "Chat with other players, find opponents and follow tournaments. Everyone welcome!",
+      "cta": "View Discord"
+    },
+    "newsletter": {
+      "title": "Newsletter",
+      "desc": "Get news about tournaments, events and educational content delivered to your inbox.",
+      "placeholder": "Your email address",
+      "cta": "Subscribe"
+    }
+  },
+  "footer": {
+    "tagline": "Growing backgammon culture in Iceland — from beginners to world championships.",
+    "wbif": "Member of WBIF — World Backgammon Internet Federation",
+    "quickLinks": "Quick Links",
+    "externalLinks": "External Links",
+    "contact": "Contact",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use",
+    "copyright": "© 2026 Icelandic Backgammon Association. All rights reserved."
+  }
+}

@@ -1,0 +1,182 @@
+---
+import type { AdminUser } from '@lib/admin-auth';
+
+interface Props {
+  title: string;
+  user: AdminUser;
+  activeSection?: string;
+}
+
+const { title, user, activeSection = '' } = Astro.props;
+
+const navItems = [
+  { href: '/admin', label: 'Yfirlit', icon: '📊', key: 'dashboard' },
+  { href: '/admin/frettir', label: 'Fréttir', icon: '📰', key: 'frettir' },
+  { href: '/admin/spilarar', label: 'Spilarar', icon: '👤', key: 'spilarar' },
+  { href: '/admin/mot', label: 'Mót', icon: '🏆', key: 'mot' },
+  { href: '/admin/namsefni', label: 'Námsefni', icon: '📚', key: 'namsefni' },
+  { href: '/admin/fjolmidlar', label: 'Fjölmiðlar', icon: '📺', key: 'fjolmidlar' },
+  { href: '/admin/postlisti', label: 'Póstlisti', icon: '📧', key: 'postlisti' },
+  { href: '/admin/stjorn', label: 'Stjórn', icon: '👥', key: 'stjorn' },
+];
+---
+
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>{title} — Kotra Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="min-h-screen bg-gray-50 font-sans">
+  <!-- Top Bar -->
+  <header class="bg-deep-purple text-white h-14 flex items-center px-6 fixed top-0 left-0 right-0 z-50">
+    <a href="/admin" class="flex items-center gap-2 mr-8">
+      <div class="w-8 h-8 gradient-cta rounded-lg flex items-center justify-center text-sm">🎲</div>
+      <span class="font-semibold text-sm">Kotra Admin</span>
+    </a>
+    <div class="flex-1"></div>
+    <div class="flex items-center gap-4">
+      <a href="/is" class="text-white/60 text-xs hover:text-white transition-colors">← Forsíða</a>
+      <span class="text-white/40 text-xs">|</span>
+      <span class="text-white/70 text-xs">{user.display_name || user.email}</span>
+      <form method="POST" action="/admin/api/logout">
+        <button type="submit" class="text-white/50 text-xs hover:text-white transition-colors cursor-pointer">
+          Útskrá
+        </button>
+      </form>
+    </div>
+  </header>
+
+  <div class="flex pt-14">
+    <!-- Sidebar -->
+    <aside class="w-56 bg-white border-r border-gray-200 min-h-[calc(100vh-3.5rem)] fixed left-0 top-14 overflow-y-auto">
+      <nav class="py-4">
+        {navItems.map((item) => (
+          <a
+            href={item.href}
+            class:list={[
+              'flex items-center gap-3 px-5 py-2.5 text-sm transition-colors',
+              activeSection === item.key
+                ? 'bg-purple-50 text-deep-purple font-semibold border-r-2 border-deep-purple'
+                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+            ]}
+          >
+            <span class="text-base">{item.icon}</span>
+            {item.label}
+          </a>
+        ))}
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 ml-56 p-8">
+      <slot />
+    </main>
+  </div>
+</body>
+</html>
+
+<style>
+  @import '../styles/global.css';
+
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+
+  /* Admin-specific utilities — plain CSS to avoid Tailwind v4 @apply issues */
+  .admin-card {
+    background: white;
+    border-radius: 0.75rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+
+  .admin-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.15s;
+    cursor: pointer;
+    border: none;
+  }
+
+  .admin-btn-primary {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem;
+    font-weight: 500; cursor: pointer; border: none; transition: all 0.15s;
+    background: #451952; color: white;
+  }
+  .admin-btn-primary:hover { background: #662549; }
+
+  .admin-btn-secondary {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem;
+    font-weight: 500; cursor: pointer; transition: all 0.15s;
+    background: white; color: #374151; border: 1px solid #d1d5db;
+  }
+  .admin-btn-secondary:hover { background: #f9fafb; }
+
+  .admin-btn-danger {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem;
+    font-weight: 500; cursor: pointer; border: none; transition: all 0.15s;
+    background: #dc2626; color: white;
+  }
+  .admin-btn-danger:hover { background: #b91c1c; }
+
+  .admin-input {
+    width: 100%; padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db; border-radius: 0.5rem;
+    font-size: 0.875rem;
+  }
+  .admin-input:focus {
+    outline: none; box-shadow: 0 0 0 2px rgba(69,25,82,0.2);
+    border-color: #451952;
+  }
+
+  .admin-textarea {
+    width: 100%; padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db; border-radius: 0.5rem;
+    font-size: 0.875rem; min-height: 120px; resize: vertical;
+  }
+  .admin-textarea:focus {
+    outline: none; box-shadow: 0 0 0 2px rgba(69,25,82,0.2);
+    border-color: #451952;
+  }
+
+  .admin-label {
+    display: block; font-size: 0.875rem; font-weight: 500;
+    color: #374151; margin-bottom: 0.25rem;
+  }
+
+  .admin-table { width: 100%; font-size: 0.875rem; }
+  .admin-table th {
+    text-align: left; padding: 0.75rem 1rem;
+    font-size: 0.75rem; font-weight: 600; color: #6b7280;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    background: #f9fafb; border-bottom: 1px solid #e5e7eb;
+  }
+  .admin-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .admin-table tr:hover td { background: #f9fafb; }
+
+  .admin-badge {
+    display: inline-flex; align-items: center;
+    padding: 0.125rem 0.5rem; border-radius: 9999px;
+    font-size: 0.75rem; font-weight: 500;
+  }
+  .admin-badge-green { background: #dcfce7; color: #166534; }
+  .admin-badge-yellow { background: #fef9c3; color: #854d0e; }
+  .admin-badge-gray { background: #f3f4f6; color: #1f2937; }
+</style>

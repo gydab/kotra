@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+/* ============================================
+   KOTRA.IS — Design Tokens
+   Palette: #451952, #662549, #AE445A, #F39F5A
+   ============================================ */
+
+@theme {
+  --color-deep-purple: #451952;
+  --color-warm-plum: #662549;
+  --color-berry: #AE445A;
+  --color-gold: #F39F5A;
+  --color-off-white: #FAF5F0;
+  --color-lavender: #F3EDF7;
+  --color-dark-text: #2D1B33;
+  --color-muted-text: #6B5B73;
+
+  --font-heading: 'DM Serif Display', Georgia, serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono: 'Space Grotesk', ui-monospace, monospace;
+}
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-dark-text);
+  background: var(--color-off-white);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  line-height: 1.2;
+}
+
+/* Gradient utilities */
+.gradient-hero {
+  background: linear-gradient(135deg, #451952 0%, #662549 50%, #5a2d5e 100%);
+}
+
+.gradient-cta {
+  background: linear-gradient(135deg, #AE445A 0%, #F39F5A 100%);
+}
+
+.gradient-cta-hover {
+  background: linear-gradient(135deg, #c44f66 0%, #f5af70 100%);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #AE445A 0%, #F39F5A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Animations */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.animate-pulse-dot {
+  animation: pulse-dot 2s infinite;
+}
+
+/* Card hover effect */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(69, 25, 82, 0.15);
+}
+
+/* Nav link underline animation */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--color-gold);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Top border gradient on cards */
+.card-top-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #AE445A, #F39F5A);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.card-top-border:hover::before {
+  opacity: 1;
+}

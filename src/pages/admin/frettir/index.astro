@@ -1,0 +1,69 @@
+---
+export const prerender = false;
+
+import AdminLayout from '@layouts/AdminLayout.astro';
+import { requireAdmin } from '@lib/admin-auth';
+import { supabase } from '@lib/supabase';
+
+const user = await requireAdmin(Astro);
+
+const { data: news } = await supabase
+  .from('news')
+  .select('id, title_is, published, published_date, created_at')
+  .order('created_at', { ascending: false });
+---
+
+<AdminLayout title="Fréttir" user={user} activeSection="frettir">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Fréttir</h1>
+      <p class="text-gray-500 text-sm mt-1">Bættu við, breyttu eða birtu fréttir.</p>
+    </div>
+    <a href="/admin/frettir/ny" class="admin-btn-primary text-sm">+ Ný frétt</a>
+  </div>
+
+  {news && news.length > 0 ? (
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Titill</th>
+          <th>Staða</th>
+          <th>Birting</th>
+          <th>Stofnað</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {news.map((item) => (
+          <tr>
+            <td class="font-medium text-gray-900">{item.title_is || '(enginn titill)'}</td>
+            <td>
+              {item.published ? (
+                <span class="admin-badge-green">Birt</span>
+              ) : (
+                <span class="admin-badge-yellow">Drög</span>
+              )}
+            </td>
+            <td class="text-gray-500">
+              {item.published_date
+                ? new Date(item.published_date).toLocaleDateString('is-IS')
+                : '—'}
+            </td>
+            <td class="text-gray-400 text-xs">
+              {item.created_at ? new Date(item.created_at).toLocaleDateString('is-IS') : '—'}
+            </td>
+            <td class="text-right">
+              <a href={`/admin/frettir/${item.id}`} class="text-deep-purple text-sm hover:underline">
+                Breyta
+              </a>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  ) : (
+    <div class="admin-card p-8 text-center text-gray-500 text-sm">
+      Engar fréttir til. Búðu til þá fyrstu.
+    </div>
+  )}
+</AdminLayout>
