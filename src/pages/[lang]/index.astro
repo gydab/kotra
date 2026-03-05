@@ -138,37 +138,35 @@ const i = t(lang);
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { name: 'Jón Sigurðsson', nick: '@jonsi_bg', pr: '4.2', elo: '1820', rank: 1, badges: ['WBIF', 'Heroes'] },
-          { name: 'Guðrún Helgadóttir', nick: '@gudrun_bg', pr: '5.1', elo: '1745', rank: 2, badges: ['WBIF', 'Heroes'] },
-          { name: 'Ólafur Björnsson', nick: '@olafur_dice', pr: '5.8', elo: '1690', rank: 3, badges: ['Heroes'] },
-          { name: 'Sigríður Jónsdóttir', nick: '@sigga_kotra', pr: '6.3', elo: '1650', rank: 4, badges: ['Heroes'] },
+          { name: 'Grétar Aasen', title: 'Expert E5', rating: '1674', rank: 1, wbifRank: 102 },
+          { name: 'Donara Levonsdóttir', title: 'Expert E4', rating: '1663', rank: 2, wbifRank: 652 },
+          { name: 'Bjössi Sigmars', title: 'Expert E3', rating: '1649', rank: 3, wbifRank: 604 },
+          { name: 'Vesteinn Stefánsson', title: 'Expert E3', rating: '1644', rank: 4, wbifRank: 620 },
         ].map((player) => (
           <div class="card-hover bg-white rounded-xl p-7 text-center shadow-[0_4px_20px_rgba(69,25,82,0.08)] relative">
             <span class="absolute top-3 right-3 text-gold text-sm font-bold" style="font-family: var(--font-mono);">#{player.rank}</span>
             <div class="w-20 h-20 rounded-full gradient-hero mx-auto mb-4 flex items-center justify-center text-3xl text-white border-3 border-lavender shadow-[0_4px_12px_rgba(69,25,82,0.15)]">
-              👤
+              {player.name.charAt(0)}
             </div>
             <h3 class="text-base font-semibold text-deep-purple">{player.name}</h3>
-            <span class="text-xs text-muted-text block mb-4">{player.nick}</span>
+            <span class="text-xs text-muted-text block mb-4">{player.title} · WBIF #{player.wbifRank}</span>
             <div class="flex justify-center gap-5 mb-3">
               <div class="text-center">
-                <span class="text-lg font-bold text-deep-purple block" style="font-family: var(--font-mono);">{player.pr}</span>
-                <span class="text-[10px] text-muted-text uppercase tracking-wider font-semibold">PR</span>
-              </div>
-              <div class="text-center">
-                <span class="text-lg font-bold text-deep-purple block" style="font-family: var(--font-mono);">{player.elo}</span>
-                <span class="text-[10px] text-muted-text uppercase tracking-wider font-semibold">Elo</span>
+                <span class="text-lg font-bold text-deep-purple block" style="font-family: var(--font-mono);">{player.rating}</span>
+                <span class="text-[10px] text-muted-text uppercase tracking-wider font-semibold">Rating</span>
               </div>
             </div>
             <div class="flex gap-1.5 justify-center flex-wrap">
-              {player.badges.map((badge) => (
-                <span class={`text-[10px] px-2 py-0.5 rounded font-semibold ${
-                  badge === 'WBIF' ? 'bg-deep-purple/10 text-deep-purple' : 'bg-gold/15 text-amber-700'
-                }`}>{badge}</span>
-              ))}
+              <span class="text-[10px] px-2 py-0.5 rounded font-semibold bg-deep-purple/10 text-deep-purple">WBIF</span>
             </div>
           </div>
         ))}
+      </div>
+
+      <div class="text-center mt-10">
+        <a href={`/${lang}/leikmenn`} class="inline-flex items-center gap-2 gradient-cta text-white px-8 py-3.5 rounded-xl text-sm font-semibold shadow-[0_4px_15px_rgba(174,68,90,0.3)] hover:shadow-[0_6px_20px_rgba(174,68,90,0.4)] hover:-translate-y-0.5 transition-all no-underline">
+          {lang === 'is' ? 'Sjá alla spilara' : 'View All Players'} →
+        </a>
       </div>
     </div>
   </section>

@@ -48,3 +48,5 @@ Kotrusamband Íslands (KSÍ) er að byggja upp stafrænt vistkerfi fyrir íslens
 - [07 — WBIF samþætting](./07-wbif.md)
 - [08 — Framkvæmdaáætlun](./08-framkvaemdaaaetlun.md)
 - [09 — Backgammon engine rannsókn](./09-backgammon-engine.md)
+- [10 — Starfsreglur stjórnar](./10-starfsreglur-stjornar.md)
+- [11 — Mótahald](./11-motahald.md)

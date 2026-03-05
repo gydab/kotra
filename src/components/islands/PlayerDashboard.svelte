@@ -29,7 +29,10 @@
   let editMode = $state(false);
   let editName = $state(_initProfile?.display_name ?? '');
   let editBio = $state(_initProfile?.bio ?? '');
+  let editWbifId = $state(_initProfile?.wbif_id ?? '');
   let saving = $state(false);
+  let wbifLinking = $state(false);
+  let wbifLinkError = $state('');
 
   // svelte-ignore state_referenced_locally
   const isIs = (locale as string) === 'is';
@@ -54,14 +57,39 @@
       .update({
         display_name: editName,
         bio: editBio,
+        wbif_id: editWbifId || null,
       })
       .eq('id', user.id);
 
     if (!error) {
-      playerProfile = { ...playerProfile, display_name: editName, bio: editBio };
+      playerProfile = { ...playerProfile, display_name: editName, bio: editBio, wbif_id: editWbifId || null };
       editMode = false;
     }
     saving = false;
+  }
+
+  async function linkWbifProfile() {
+    if (!editWbifId.trim()) return;
+    wbifLinking = true;
+    wbifLinkError = '';
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { wbifLinking = false; return; }
+
+    const { error } = await supabase
+      .from('player_profiles')
+      .update({
+        wbif_id: editWbifId.trim(),
+        wbif_verified: false,
+      })
+      .eq('id', user.id);
+
+    if (error) {
+      wbifLinkError = isIs ? 'Villa við að tengja WBIF prófíl' : 'Error linking WBIF profile';
+    } else {
+      playerProfile = { ...playerProfile, wbif_id: editWbifId.trim(), wbif_verified: false };
+    }
+    wbifLinking = false;
   }
 
   function formatDate(d: string): string {
@@ -296,6 +324,65 @@
           {/if}
         </div>
       </div>
+
+      <!-- WBIF Profile Link -->
+      <div class="wbif-section">
+        <h3>🌐 {isIs ? 'WBIF prófíll' : 'WBIF Profile'}</h3>
+        <p class="wbif-description">
+          {isIs
+            ? 'Tengdu WBIF (World Backgammon Internet Federation) prófílinn þinn til að sýna rating og tölfræði.'
+            : 'Link your WBIF (World Backgammon Internet Federation) profile to show your rating and stats.'}
+        </p>
+
+        {#if playerProfile?.wbif_id}
+          <!-- WBIF is linked -->
+          <div class="wbif-linked">
+            <div class="wbif-linked-info">
+              <span class="wbif-linked-badge">✓ {isIs ? 'Tengt' : 'Linked'}</span>
+              <span class="wbif-linked-id">WBIF ID: {playerProfile.wbif_id}</span>
+            </div>
+            <a
+              href={`https://matches.wbif.net/wbif/matchlog?id=${playerProfile.wbif_id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="wbif-view-link"
+            >
+              {isIs ? 'Skoða á WBIF' : 'View on WBIF'} ↗
+            </a>
+          </div>
+        {:else}
+          <!-- WBIF not linked – show link form -->
+          <div class="wbif-link-form">
+            <p class="wbif-help-text">
+              {isIs
+                ? 'Finndu WBIF ID-ið þitt á '
+                : 'Find your WBIF ID at '}
+              <a href="https://matches.wbif.net/wbif/ratings" target="_blank" rel="noopener noreferrer" class="wbif-help-link">
+                matches.wbif.net
+              </a>
+              {isIs ? ' (númerið í slóðinni).' : ' (the number in the URL).'}
+            </p>
+            <div class="wbif-input-row">
+              <input
+                type="text"
+                class="wbif-input"
+                bind:value={editWbifId}
+                placeholder={isIs ? 'WBIF ID (t.d. 3286)' : 'WBIF ID (e.g. 3286)'}
+              />
+              <button
+                class="wbif-link-btn"
+                onclick={linkWbifProfile}
+                disabled={wbifLinking || !editWbifId.trim()}
+              >
+                {wbifLinking ? '⏳' : (isIs ? 'Tengja' : 'Link')}
+              </button>
+            </div>
+            {#if wbifLinkError}
+              <p class="wbif-error">{wbifLinkError}</p>
+            {/if}
+          </div>
+        {/if}
+      </div>
     </div>
   {/if}
 </div>
@@ -466,6 +553,55 @@
   .meta-value { font-size: 14px; color: #FAF5F0; font-weight: 500; }
 
   .loading { text-align: center; padding: 40px; color: rgba(250,245,240,0.5); }
+
+  /* WBIF section */
+  .wbif-section {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; padding: 24px; margin-top: 16px;
+  }
+  .wbif-section h3 { color: #FAF5F0; font-size: 16px; margin: 0 0 6px; }
+  .wbif-description { color: rgba(250,245,240,0.5); font-size: 13px; margin: 0 0 16px; line-height: 1.5; }
+
+  .wbif-linked {
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(39,174,96,0.08); border: 1px solid rgba(39,174,96,0.2);
+    border-radius: 10px; padding: 14px 18px;
+  }
+  .wbif-linked-info { display: flex; align-items: center; gap: 12px; }
+  .wbif-linked-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(39,174,96,0.15); color: #27ae60;
+    padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;
+  }
+  .wbif-linked-id { color: rgba(250,245,240,0.6); font-size: 13px; font-family: var(--font-mono, monospace); }
+  .wbif-view-link {
+    color: #F39F5A; font-size: 13px; font-weight: 600;
+    text-decoration: none; transition: color 0.15s;
+  }
+  .wbif-view-link:hover { color: #FAF5F0; }
+
+  .wbif-link-form { margin-top: 4px; }
+  .wbif-help-text { color: rgba(250,245,240,0.4); font-size: 12px; margin: 0 0 10px; }
+  .wbif-help-link { color: #F39F5A; text-decoration: none; }
+  .wbif-help-link:hover { text-decoration: underline; }
+
+  .wbif-input-row { display: flex; gap: 8px; }
+  .wbif-input {
+    flex: 1; padding: 8px 14px; border: 1px solid rgba(250,245,240,0.15);
+    border-radius: 8px; background: rgba(0,0,0,0.2); color: #FAF5F0;
+    font-size: 14px; font-family: var(--font-mono, monospace); box-sizing: border-box;
+  }
+  .wbif-input:focus { outline: none; border-color: #F39F5A; }
+  .wbif-input::placeholder { color: rgba(250,245,240,0.25); font-family: inherit; }
+  .wbif-link-btn {
+    padding: 8px 20px; border: none; border-radius: 8px;
+    background: linear-gradient(135deg, #AE445A, #F39F5A); color: white;
+    font-weight: 600; font-size: 13px; cursor: pointer; font-family: inherit;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .wbif-link-btn:hover:not(:disabled) { transform: translateY(-1px); }
+  .wbif-link-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .wbif-error { color: #e74c3c; font-size: 12px; margin-top: 8px; }
 
   /* Responsive */
   @media (max-width: 768px) {
