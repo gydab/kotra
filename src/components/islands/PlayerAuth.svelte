@@ -13,6 +13,11 @@
   let displayName = $state('');
   let authError = $state('');
   let authLoading = $state(false);
+  let showResetForm = $state(false);
+  let resetEmail = $state('');
+  let resetMessage = $state('');
+  let resetError = $state('');
+  let resetLoading = $state(false);
 
   // Check session on mount
   $effect(() => {
@@ -95,7 +100,23 @@
     if (showAuthPanel) {
       resetForm();
       authMode = 'login';
+      showResetForm = false;
     }
+  }
+
+  async function handlePasswordReset() {
+    resetError = '';
+    resetMessage = '';
+    resetLoading = true;
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+      redirectTo: `${window.location.origin}/is/endursetja-lykilord`,
+    });
+    resetLoading = false;
+    if (error) {
+      resetError = error.message;
+      return;
+    }
+    resetMessage = 'Tölvupóstur hefur verið sendur með tengli til að endursetja lykilorðið.';
   }
 </script>
 
@@ -116,7 +137,43 @@
 
     {#if showAuthPanel}
       <div class="auth-panel">
-        <!-- Tab switcher -->
+        {#if showResetForm}
+          <!-- Password Reset Form -->
+          <h3 class="auth-reset-title">🔑 Endursetja lykilorð</h3>
+          <p class="auth-reset-desc">Sláðu inn netfangið þitt og við sendum þér tengli til að velja nýtt lykilorð.</p>
+          <form onsubmit={(e) => { e.preventDefault(); handlePasswordReset(); }}>
+            <label class="auth-label">
+              Netfang
+              <input
+                type="email"
+                class="auth-input"
+                bind:value={resetEmail}
+                placeholder="þú@dæmi.is"
+                required
+              />
+            </label>
+
+            {#if resetError}
+              <p class="auth-error">{resetError}</p>
+            {/if}
+
+            {#if resetMessage}
+              <p class="auth-success">{resetMessage}</p>
+            {/if}
+
+            <button type="submit" class="btn-auth-submit" disabled={resetLoading}>
+              {#if resetLoading}
+                ⏳ Augnablik...
+              {:else}
+                → Senda tengli
+              {/if}
+            </button>
+          </form>
+          <p class="auth-note">
+            <button class="link-btn" onclick={() => { showResetForm = false; resetError = ''; resetMessage = ''; }}>← Til baka í innskráningu</button>
+          </p>
+        {:else}
+          <!-- Tab switcher -->
         <div class="auth-tabs">
           <button
             class="auth-tab"
@@ -182,10 +239,13 @@
         <p class="auth-note">
           {#if authMode === 'login'}
             Engin aðgangur? <button class="link-btn" onclick={() => authMode = 'signup'}>Stofna nýjan</button>
+            <br/>
+            <button class="link-btn forgot-link" onclick={() => { showResetForm = true; resetEmail = email; }}>Gleymt lykilorð?</button>
           {:else}
             Ertu nú þegar með aðgang? <button class="link-btn" onclick={() => authMode = 'login'}>Skrá inn</button>
           {/if}
         </p>
+        {/if}
       </div>
     {/if}
   {/if}
@@ -365,5 +425,39 @@
     text-decoration: underline;
     font-family: inherit;
     padding: 0;
+  }
+
+  .forgot-link {
+    margin-top: 6px;
+    display: inline-block;
+    opacity: 0.7;
+    font-size: 11px;
+  }
+  .forgot-link:hover {
+    opacity: 1;
+  }
+
+  .auth-reset-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #FAF5F0;
+    margin: 0 0 6px;
+  }
+
+  .auth-reset-desc {
+    font-size: 12px;
+    color: rgba(250,245,240,0.5);
+    margin: 0 0 16px;
+    line-height: 1.5;
+  }
+
+  .auth-success {
+    margin: 0 0 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: rgba(39,174,96,0.15);
+    color: #27ae60;
+    font-size: 12px;
+    line-height: 1.4;
   }
 </style>

@@ -1,0 +1,33 @@
+---
+export const prerender = false;
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import type { Locale } from '@i18n/index';
+import { t } from '@i18n/index';
+import PasswordReset from '@components/islands/PasswordReset.svelte';
+
+const lang = (Astro.params.lang ?? 'is') as Locale;
+const i = t(lang);
+
+const title = lang === 'is' ? 'Endursetja lykilorð' : 'Reset Password';
+const subtitle = lang === 'is'
+  ? 'Veldu nýtt lykilorð fyrir aðganginn þinn.'
+  : 'Choose a new password for your account.';
+---
+
+<BaseLayout locale={lang} title={`${title} — ${i.site.title}`}>
+  <section class="gradient-hero pt-24 pb-12 text-center">
+    <div class="max-w-3xl mx-auto px-6">
+      <h1 class="text-4xl md:text-5xl text-white mb-3 tracking-tight" style="font-family: var(--font-heading);">
+        🔑 {title}
+      </h1>
+      <p class="text-white/70 text-base">{subtitle}</p>
+    </div>
+  </section>
+
+  <section class="bg-[#1a0f1f] py-12 px-4 min-h-[50vh]">
+    <div class="max-w-md mx-auto">
+      <PasswordReset client:load locale={lang} />
+    </div>
+  </section>
+</BaseLayout>

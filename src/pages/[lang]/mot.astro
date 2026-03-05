@@ -1,0 +1,383 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import type { Locale } from '@i18n/index';
+import { t, locales } from '@i18n/index';
+
+export function getStaticPaths() {
+  return locales.map((locale) => ({
+    params: { lang: locale },
+  }));
+}
+
+const { lang } = Astro.params as { lang: Locale };
+const i = t(lang);
+
+// ─── Tournament Data (WBIF Icelandic National 2025-2026) ───
+
+const tournament = {
+  name: lang === 'is' ? 'Íslandsmót í kotru 2025–2026' : 'Icelandic National Backgammon 2025–2026',
+  type: 'Round Robin',
+  matchPoints: 13,
+  rounds: 3,
+  deadline: '22. mars 2026',
+  source: 'https://www.wbif.net/index.php?nav_id=36&age=NC',
+  status: 'live' as const,
+};
+
+interface Player {
+  rank: number;
+  name: string;
+  played: number;
+  won: number;
+  lost: number;
+  pr?: number;
+}
+
+const standings: Player[] = [
+  { rank: 1, name: 'Hafliði Kristjánsson', played: 2, won: 2, lost: 0 },
+  { rank: 1, name: 'Donara Levonsdóttir', played: 2, won: 2, lost: 0, pr: 23.19 },
+  { rank: 3, name: 'Kristjana Birgisdóttir', played: 1, won: 1, lost: 0 },
+  { rank: 3, name: 'Gyða Björg Sigurðardóttir', played: 1, won: 1, lost: 0 },
+  { rank: 3, name: 'Sigurður Porsteinsson', played: 1, won: 1, lost: 0 },
+  { rank: 3, name: 'Kristinn Bjorgvinsson', played: 1, won: 1, lost: 0 },
+  { rank: 3, name: 'Ólafur Tryggvason', played: 1, won: 1, lost: 0 },
+  { rank: 3, name: 'Bjössi Sigmars', played: 1, won: 1, lost: 0 },
+];
+
+const waitingPlayers: string[] = [
+  'Grétar Aasen', 'Vesteinn Stefánsson', 'Ragnar Jóhannsson', 'Magnús Jóhannsson',
+  'Guðmundur Pétursson', 'Gísli Hrafnkelsson', 'Gunnar Birnir Jónsson', 'Þórgils Bjarnason',
+  'Þórir Ólafsson', 'Kolbrún Löve', 'Erlendur Antonsson', 'Björn Friðgeir Björnsson',
+  'Karen Fossdal', 'Kristinn Bjarnason', 'Elis Svavarsson', 'András Gaál',
+  'Grímar Jónsson', 'Ragnar B. Jóhannsson', 'Aðalsteinn Bjarnason', 'Andri Gunnarsson',
+  'Frederikke Bang', 'Robert Lagerman', 'Gunnar Gunnarsson', 'Valdís Gyða Jónsdóttir',
+  'Einar Þór Jónsson', 'Sigríður Guðjónsdóttir', 'Guðrún Helga Jóhannesdóttir', 'Ingvar Þór Sigurðsson',
+];
+
+interface Match {
+  round: number;
+  player1: string;
+  score1: number;
+  player2: string;
+  score2: number;
+  date: string;
+  pr1?: number;
+  pr2?: number;
+}
+
+const recentMatches: Match[] = [
+  { round: 3, player1: 'Bjössi Sigmars', score1: 1, player2: 'Gunnar Gunnsteinsson', score2: 0, date: '14. mars 2026' },
+  { round: 3, player1: 'Margret Oskarsdottir', score1: 0, player2: 'Hafliði Kristjánsson', score2: 1, date: '11. mars 2026' },
+  { round: 3, player1: 'María', score1: 0, player2: 'Kristjana Birgisdóttir', score2: 1, date: '8. mars 2026' },
+  { round: 2, player1: 'Tryggvi', score1: 0, player2: 'Donara Levonsdóttir', score2: 1, date: '2. mars 2026', pr1: 39.73, pr2: 23.19 },
+  { round: 2, player1: 'Kristinn Bjorgvinsson', score1: 1, player2: 'Jón Vilberg Georgsson', score2: 0, date: '28. feb 2026' },
+  { round: 2, player1: 'Gyða Björg Sigurðardóttir', score1: 1, player2: 'Margrét Hróarsdóttir', score2: 0, date: '25. feb 2026' },
+  { round: 2, player1: 'Thura Stina', score1: 0, player2: 'Hafliði Kristjánsson', score2: 1, date: '20. feb 2026' },
+  { round: 1, player1: 'Sigurður Porsteinsson', score1: 1, player2: 'Eyrún', score2: 0, date: '10. feb 2026' },
+  { round: 1, player1: 'Auður', score1: 0, player2: 'Donara Levonsdóttir', score2: 1, date: '5. feb 2026' },
+  { round: 1, player1: 'Signy', score1: 0, player2: 'Ólafur Tryggvason', score2: 1, date: '1. feb 2026' },
+];
+
+const labels = lang === 'is' ? {
+  title: 'Íslandsmót í kotru',
+  subtitle: 'WBIF netmót — Round Robin, 13 stigum',
+  live: 'Í gangi',
+  standings: 'Staða',
+  recentMatches: 'Nýlegir leikir',
+  waitingToPlay: 'Bíða eftir leik',
+  rank: 'Sæti',
+  player: 'Spilari',
+  played: 'Leikir',
+  won: 'S',
+  lost: 'T',
+  round: 'Umferð',
+  vs: 'gegn',
+  result: 'Úrslit',
+  date: 'Dagsetning',
+  deadline: 'Frestur',
+  deadlineText: 'Umferð 3 lýkur',
+  totalPlayers: 'Skráðir spilarar',
+  completedMatches: 'Spilaðir leikir',
+  matchFormat: '13 stig á leik',
+  rounds: '3 umferðir',
+  viewOnWbif: 'Sjá á WBIF ↗',
+  noGamesYet: 'Hafa ekki spilað ennþá',
+  performanceRating: 'PR',
+} : {
+  title: 'Icelandic National Tournament',
+  subtitle: 'WBIF Online — Round Robin, 13 points',
+  live: 'Live',
+  standings: 'Standings',
+  recentMatches: 'Recent Matches',
+  waitingToPlay: 'Waiting to Play',
+  rank: 'Rank',
+  player: 'Player',
+  played: 'Played',
+  won: 'W',
+  lost: 'L',
+  round: 'Round',
+  vs: 'vs',
+  result: 'Result',
+  date: 'Date',
+  deadline: 'Deadline',
+  deadlineText: 'Round 3 ends',
+  totalPlayers: 'Registered Players',
+  completedMatches: 'Matches Played',
+  matchFormat: '13 points per match',
+  rounds: '3 rounds',
+  viewOnWbif: 'View on WBIF ↗',
+  noGamesYet: 'Haven\'t played yet',
+  performanceRating: 'PR',
+};
+---
+
+<BaseLayout locale={lang} title={`${labels.title} — ${i.site.title}`}>
+  <!-- ========== HERO ========== -->
+  <section class="gradient-hero pt-24 pb-20 relative overflow-hidden text-center">
+    <div class="absolute -top-1/2 -right-1/5 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(174,68,90,0.15)_0%,transparent_70%)] rounded-full"></div>
+    <div class="absolute -bottom-1/3 -left-1/10 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(243,159,90,0.1)_0%,transparent_70%)] rounded-full"></div>
+
+    <div class="relative z-10 max-w-3xl mx-auto px-6">
+      <div class="inline-flex items-center gap-2 bg-berry/20 border border-berry/30 px-4 py-1.5 rounded-full text-white text-xs font-bold mb-6 backdrop-blur-sm animate-pulse">
+        <span class="w-2 h-2 bg-red-400 rounded-full"></span>
+        {labels.live}
+      </div>
+
+      <h1 class="text-4xl md:text-6xl text-white mb-4 tracking-tight" style="font-family: var(--font-heading);">
+        🏆 {labels.title}
+      </h1>
+
+      <p class="text-white/70 text-lg mb-8">
+        {labels.subtitle}
+      </p>
+
+      <!-- Tournament info cards -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-2xl mx-auto">
+        <div class="bg-white/10 border border-white/15 rounded-xl p-3.5 backdrop-blur-sm">
+          <span class="text-2xl font-bold text-white block" style="font-family: var(--font-mono);">46</span>
+          <span class="text-[10px] text-white/50 uppercase tracking-wider font-semibold">{labels.totalPlayers}</span>
+        </div>
+        <div class="bg-white/10 border border-white/15 rounded-xl p-3.5 backdrop-blur-sm">
+          <span class="text-2xl font-bold text-white block" style="font-family: var(--font-mono);">10</span>
+          <span class="text-[10px] text-white/50 uppercase tracking-wider font-semibold">{labels.completedMatches}</span>
+        </div>
+        <div class="bg-white/10 border border-white/15 rounded-xl p-3.5 backdrop-blur-sm">
+          <span class="text-2xl font-bold text-gold block" style="font-family: var(--font-mono);">13</span>
+          <span class="text-[10px] text-white/50 uppercase tracking-wider font-semibold">{labels.matchFormat}</span>
+        </div>
+        <div class="bg-white/10 border border-white/15 rounded-xl p-3.5 backdrop-blur-sm">
+          <span class="text-2xl font-bold text-white block" style="font-family: var(--font-mono);">3</span>
+          <span class="text-[10px] text-white/50 uppercase tracking-wider font-semibold">{labels.rounds}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wave -->
+  <svg viewBox="0 0 1440 60" preserveAspectRatio="none" class="block w-full h-[60px]" style="background: #451952; margin-bottom: -1px;">
+    <path fill="#FAF5F0" d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z"/>
+  </svg>
+
+  <!-- ========== DEADLINE BANNER ========== -->
+  <section class="bg-off-white pt-8 pb-4">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="bg-gradient-to-r from-berry/10 to-gold/10 border border-berry/20 rounded-xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">⏰</span>
+          <div>
+            <span class="text-xs text-berry font-bold uppercase tracking-wider">{labels.deadlineText}</span>
+            <p class="text-deep-purple font-bold text-lg" style="font-family: var(--font-heading);">{tournament.deadline}</p>
+          </div>
+        </div>
+        <a href={tournament.source} target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center gap-2 gradient-cta text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-[0_4px_15px_rgba(174,68,90,0.3)] hover:shadow-[0_6px_20px_rgba(174,68,90,0.4)] hover:-translate-y-0.5 transition-all no-underline">
+          {labels.viewOnWbif}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== STANDINGS ========== -->
+  <section class="bg-off-white py-12">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="mb-8">
+        <span class="text-xs font-bold uppercase tracking-[2px] text-berry mb-2 block">📊</span>
+        <h2 class="text-2xl md:text-3xl text-deep-purple" style="font-family: var(--font-heading);">{labels.standings}</h2>
+      </div>
+
+      <!-- Top 2 leader cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        {standings.slice(0, 2).map((p, idx) => (
+          <div class="relative bg-white rounded-xl p-6 shadow-[0_4px_20px_rgba(69,25,82,0.08)] border-2 border-gold/30 overflow-hidden">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-[radial-gradient(circle,rgba(243,159,90,0.1)_0%,transparent_70%)]"></div>
+            <div class="flex items-center gap-4">
+              <div class="w-14 h-14 rounded-full gradient-hero flex items-center justify-center text-2xl text-white shadow-[0_4px_12px_rgba(69,25,82,0.2)] flex-shrink-0">
+                {p.name.charAt(0)}
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-gold text-lg">🥇</span>
+                  <h3 class="text-lg font-bold text-deep-purple truncate">{p.name}</h3>
+                </div>
+                <div class="flex items-center gap-4 text-sm">
+                  <span class="text-muted-text">{p.played} {labels.played.toLowerCase()}</span>
+                  <span class="text-green-600 font-bold">{p.won}{labels.won}</span>
+                  <span class="text-red-400">{p.lost}{labels.lost}</span>
+                  {p.pr && <span class="text-xs bg-berry/10 text-berry px-2 py-0.5 rounded font-mono">{labels.performanceRating} {p.pr}</span>}
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-3xl font-bold text-gold" style="font-family: var(--font-mono);">#{p.rank}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Remaining standings table -->
+      <div class="bg-white rounded-xl shadow-[0_4px_20px_rgba(69,25,82,0.08)] overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="bg-lavender/50 text-left">
+                <th class="px-5 py-3 text-xs font-bold uppercase tracking-wider text-deep-purple/60">{labels.rank}</th>
+                <th class="px-5 py-3 text-xs font-bold uppercase tracking-wider text-deep-purple/60">{labels.player}</th>
+                <th class="px-5 py-3 text-xs font-bold uppercase tracking-wider text-deep-purple/60 text-center">{labels.played}</th>
+                <th class="px-5 py-3 text-xs font-bold uppercase tracking-wider text-deep-purple/60 text-center">{labels.won}</th>
+                <th class="px-5 py-3 text-xs font-bold uppercase tracking-wider text-deep-purple/60 text-center">{labels.lost}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {standings.slice(2).map((p, idx) => (
+                <tr class={`border-t border-lavender/30 ${idx % 2 === 0 ? 'bg-white' : 'bg-lavender/10'} hover:bg-berry/5 transition-colors`}>
+                  <td class="px-5 py-3.5">
+                    <span class="text-sm font-bold text-deep-purple/60" style="font-family: var(--font-mono);">#{p.rank}</span>
+                  </td>
+                  <td class="px-5 py-3.5">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-full gradient-hero flex items-center justify-center text-xs text-white flex-shrink-0">
+                        {p.name.charAt(0)}
+                      </div>
+                      <span class="font-medium text-deep-purple">{p.name}</span>
+                    </div>
+                  </td>
+                  <td class="px-5 py-3.5 text-center text-muted-text">{p.played}</td>
+                  <td class="px-5 py-3.5 text-center">
+                    <span class="text-green-600 font-bold">{p.won}</span>
+                  </td>
+                  <td class="px-5 py-3.5 text-center">
+                    <span class="text-red-400">{p.lost}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wave -->
+  <svg viewBox="0 0 1440 60" preserveAspectRatio="none" class="block w-full h-[60px] bg-off-white">
+    <path fill="#451952" d="M0,20 C480,50 960,0 1440,20 L1440,60 L0,60 Z"/>
+  </svg>
+
+  <!-- ========== RECENT MATCHES ========== -->
+  <section class="gradient-hero py-16">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="mb-8">
+        <span class="text-xs font-bold uppercase tracking-[2px] text-gold mb-2 block">⚔️</span>
+        <h2 class="text-2xl md:text-3xl text-white" style="font-family: var(--font-heading);">{labels.recentMatches}</h2>
+      </div>
+
+      <div class="space-y-3">
+        {recentMatches.map((m) => (
+          <div class="bg-white/[0.06] border border-white/[0.08] rounded-xl p-4 md:p-5 hover:bg-white/10 transition-all">
+            <div class="flex flex-col md:flex-row md:items-center gap-3">
+              <!-- Round badge -->
+              <div class="flex-shrink-0">
+                <span class="inline-flex items-center gap-1.5 bg-gold/20 text-gold text-[11px] font-bold px-2.5 py-1 rounded-lg">
+                  {labels.round} {m.round}
+                </span>
+              </div>
+
+              <!-- Match details -->
+              <div class="flex-1 flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                <!-- Player 1 -->
+                <div class={`flex items-center gap-2.5 flex-1 md:justify-end ${m.score1 > m.score2 ? '' : 'opacity-60'}`}>
+                  <span class={`font-medium text-sm ${m.score1 > m.score2 ? 'text-white' : 'text-white/60'}`}>
+                    {m.player1}
+                  </span>
+                  <div class={`w-8 h-8 rounded-full flex items-center justify-center text-xs text-white flex-shrink-0 ${m.score1 > m.score2 ? 'bg-green-500/30 border border-green-400/40' : 'bg-red-500/20 border border-red-400/30'}`}>
+                    {m.player1.charAt(0)}
+                  </div>
+                </div>
+
+                <!-- Score -->
+                <div class="flex items-center gap-2 justify-center flex-shrink-0 my-1 md:my-0">
+                  <span class={`text-lg font-bold ${m.score1 > m.score2 ? 'text-green-400' : 'text-white/40'}`} style="font-family: var(--font-mono);">{m.score1}</span>
+                  <span class="text-white/30 text-xs font-bold">:</span>
+                  <span class={`text-lg font-bold ${m.score2 > m.score1 ? 'text-green-400' : 'text-white/40'}`} style="font-family: var(--font-mono);">{m.score2}</span>
+                </div>
+
+                <!-- Player 2 -->
+                <div class={`flex items-center gap-2.5 flex-1 ${m.score2 > m.score1 ? '' : 'opacity-60'}`}>
+                  <div class={`w-8 h-8 rounded-full flex items-center justify-center text-xs text-white flex-shrink-0 ${m.score2 > m.score1 ? 'bg-green-500/30 border border-green-400/40' : 'bg-red-500/20 border border-red-400/30'}`}>
+                    {m.player2.charAt(0)}
+                  </div>
+                  <span class={`font-medium text-sm ${m.score2 > m.score1 ? 'text-white' : 'text-white/60'}`}>
+                    {m.player2}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Date & PR -->
+              <div class="flex-shrink-0 text-right">
+                <span class="text-xs text-white/40">{m.date}</span>
+                {(m.pr1 || m.pr2) && (
+                  <div class="text-[10px] text-white/30 mt-0.5">
+                    PR: {m.pr1 ?? '—'} / {m.pr2 ?? '—'}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Wave -->
+  <svg viewBox="0 0 1440 60" preserveAspectRatio="none" class="block w-full h-[60px]" style="background: #451952;">
+    <path fill="#FAF5F0" d="M0,0 L1440,0 L1440,40 C960,10 480,50 0,40 Z"/>
+  </svg>
+
+  <!-- ========== WAITING PLAYERS ========== -->
+  <section class="bg-off-white py-16">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="mb-6">
+        <span class="text-xs font-bold uppercase tracking-[2px] text-berry mb-2 block">⏳</span>
+        <h2 class="text-2xl text-deep-purple" style="font-family: var(--font-heading);">{labels.waitingToPlay}</h2>
+        <p class="text-sm text-muted-text mt-1">{labels.noGamesYet}</p>
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        {waitingPlayers.map((name) => (
+          <div class="inline-flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-sm border border-lavender/50 hover:border-berry/30 hover:shadow-md transition-all">
+            <div class="w-7 h-7 rounded-full bg-lavender flex items-center justify-center text-xs font-bold text-deep-purple">
+              {name.charAt(0)}
+            </div>
+            <span class="text-sm text-deep-purple font-medium">{name}</span>
+          </div>
+        ))}
+      </div>
+
+      <div class="mt-10 text-center">
+        <a href={tournament.source} target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center gap-2 gradient-cta text-white px-8 py-3.5 rounded-xl text-sm font-semibold shadow-[0_4px_15px_rgba(174,68,90,0.3)] hover:shadow-[0_6px_20px_rgba(174,68,90,0.4)] hover:-translate-y-0.5 transition-all no-underline">
+          {labels.viewOnWbif}
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
