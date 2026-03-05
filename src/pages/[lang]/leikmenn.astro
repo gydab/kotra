@@ -92,7 +92,7 @@ const titles: Record<Locale, string> = {
                 <th class="text-right px-6 py-3 text-xs font-bold uppercase tracking-wider text-deep-purple/50">PR</th>
                 <th class="text-right px-6 py-3 text-xs font-bold uppercase tracking-wider text-deep-purple/50">{isIs ? 'Leikir' : 'Matches'}</th>
                 <th class="text-right px-6 py-3 text-xs font-bold uppercase tracking-wider text-deep-purple/50">{isIs ? 'Sigur%' : 'Win%'}</th>
-                <th class="text-center px-6 py-3 text-xs font-bold uppercase tracking-wider text-deep-purple/50">WBIF</th>
+                <th class="text-center px-6 py-3 text-xs font-bold uppercase tracking-wider text-deep-purple/50">{isIs ? 'Heimssæti' : 'World Rank'}</th>
               </tr>
             </thead>
             <tbody>
@@ -148,15 +148,20 @@ const titles: Record<Locale, string> = {
                       )}
                     </td>
                     <td class="px-6 py-4 text-center">
-                      {player.wbif_id ? (
-                        <a
-                          href={getWBIFProfileUrl(player.wbif_id)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          class="inline-flex items-center gap-1 text-xs font-semibold text-berry hover:text-gold transition-colors"
-                        >
-                          {isIs ? 'Prófíll' : 'Profile'} ↗
-                        </a>
+                      {player.rank ? (
+                        <div class="flex flex-col items-center gap-0.5">
+                          <span class="text-sm font-bold text-deep-purple" style="font-family: var(--font-mono);">#{player.rank}</span>
+                          {player.wbif_id && (
+                            <a
+                              href={getWBIFProfileUrl(player.wbif_id)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              class="text-[10px] font-semibold text-berry hover:text-gold transition-colors"
+                            >
+                              {isIs ? 'Prófíll' : 'Profile'} ↗
+                            </a>
+                          )}
+                        </div>
                       ) : (
                         <span class="text-xs text-muted-text">—</span>
                       )}
@@ -193,6 +198,9 @@ const titles: Record<Locale, string> = {
                     {player.wbif_pr_overall && <span>PR {player.wbif_pr_overall.toFixed(1)}</span>}
                   </div>
                 </div>
+                {player.rank && (
+                  <span class="text-xs font-bold text-deep-purple flex-shrink-0" style="font-family: var(--font-mono);">#{player.rank}</span>
+                )}
                 {player.wbif_id && (
                   <a
                     href={getWBIFProfileUrl(player.wbif_id)}

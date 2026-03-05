@@ -149,7 +149,7 @@ const i = t(lang);
               {player.name.charAt(0)}
             </div>
             <h3 class="text-base font-semibold text-deep-purple">{player.name}</h3>
-            <span class="text-xs text-muted-text block mb-4">{player.title} · WBIF #{player.wbifRank}</span>
+            <span class="text-xs text-muted-text block mb-4">{player.title} · {lang === 'is' ? 'Heimssæti' : 'World rank'} #{player.wbifRank}</span>
             <div class="flex justify-center gap-5 mb-3">
               <div class="text-center">
                 <span class="text-lg font-bold text-deep-purple block" style="font-family: var(--font-mono);">{player.rating}</span>
