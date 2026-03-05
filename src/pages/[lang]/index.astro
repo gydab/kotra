@@ -138,10 +138,10 @@ const i = t(lang);
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { name: 'Grétar Aasen', title: 'Expert E5', rating: '1674', rank: 1, wbifRank: 102 },
-          { name: 'Donara Levonsdóttir', title: 'Expert E4', rating: '1663', rank: 2, wbifRank: 652 },
-          { name: 'Bjössi Sigmars', title: 'Expert E3', rating: '1649', rank: 3, wbifRank: 604 },
-          { name: 'Vesteinn Stefánsson', title: 'Expert E3', rating: '1644', rank: 4, wbifRank: 620 },
+          { name: 'Grétar Aasen', title: 'Expert E5', rating: '1674', rank: 1, wbifRank: 102, wbifId: '1713' },
+          { name: 'Donara Levonsdóttir', title: 'Expert E4', rating: '1663', rank: 2, wbifRank: 652, wbifId: '2468' },
+          { name: 'Bjössi Sigmars', title: 'Expert E3', rating: '1649', rank: 3, wbifRank: 604, wbifId: '2395' },
+          { name: 'Vesteinn Stefánsson', title: 'Expert E3', rating: '1644', rank: 4, wbifRank: 620, wbifId: '2129' },
         ].map((player) => (
           <div class="card-hover bg-white rounded-xl p-7 text-center shadow-[0_4px_20px_rgba(69,25,82,0.08)] relative">
             <span class="absolute top-3 right-3 text-gold text-sm font-bold" style="font-family: var(--font-mono);">#{player.rank}</span>
@@ -157,7 +157,7 @@ const i = t(lang);
               </div>
             </div>
             <div class="flex gap-1.5 justify-center flex-wrap">
-              <span class="text-[10px] px-2 py-0.5 rounded font-semibold bg-deep-purple/10 text-deep-purple">WBIF</span>
+              <a href={`https://matches.wbif.net/wbif/matchlog?id=${player.wbifId}`} target="_blank" rel="noopener noreferrer" class="text-[10px] px-2 py-0.5 rounded font-semibold bg-deep-purple/10 text-deep-purple hover:bg-berry hover:text-white transition-colors">WBIF ↗</a>
             </div>
           </div>
         ))}
