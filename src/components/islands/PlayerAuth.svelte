@@ -37,47 +37,65 @@
     }
   }
 
+  function translateAuthError(message: string): string {
+    if (message === 'Invalid login credentials') return 'Rangt netfang eða lykilorð';
+    if (message === 'Email not confirmed') return 'Netfang hefur ekki verið staðfest. Athugaðu pósthólfið þitt.';
+    if (message === 'User not found') return 'Notandi fannst ekki';
+    if (message.includes('Failed to fetch') || message.includes('fetch') || message.includes('network')) {
+      return 'Tenging við þjón mistókst. Reyndu aftur síðar.';
+    }
+    return 'Villa við innskráningu. Reyndu aftur.';
+  }
+
   async function handleLogin() {
     authError = '';
     authLoading = true;
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    authLoading = false;
-    if (error) {
-      authError = error.message === 'Invalid login credentials'
-        ? 'Rangt netfang eða lykilorð'
-        : error.message;
-      return;
-    }
-    if (data.user) {
-      isLoggedIn = true;
-      userId = data.user.id;
-      userName = data.user.user_metadata?.display_name || email.split('@')[0];
-      showAuthPanel = false;
-      resetForm();
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      authLoading = false;
+      if (error) {
+        authError = translateAuthError(error.message);
+        return;
+      }
+      if (data.user) {
+        isLoggedIn = true;
+        userId = data.user.id;
+        userName = data.user.user_metadata?.display_name || email.split('@')[0];
+        showAuthPanel = false;
+        resetForm();
+      }
+    } catch {
+      authLoading = false;
+      authError = 'Tenging við þjón mistókst. Reyndu aftur síðar.';
     }
   }
 
   async function handleSignup() {
     authError = '';
     authLoading = true;
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { display_name: displayName || email.split('@')[0] },
-      },
-    });
-    authLoading = false;
-    if (error) {
-      authError = error.message;
-      return;
-    }
-    if (data.user) {
-      isLoggedIn = true;
-      userId = data.user.id;
-      userName = displayName || email.split('@')[0];
-      showAuthPanel = false;
-      resetForm();
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { display_name: displayName || email.split('@')[0] },
+        },
+      });
+      authLoading = false;
+      if (error) {
+        authError = translateAuthError(error.message);
+        return;
+      }
+      if (data.user) {
+        isLoggedIn = true;
+        userId = data.user.id;
+        userName = displayName || email.split('@')[0];
+        showAuthPanel = false;
+        resetForm();
+      }
+    } catch {
+      authLoading = false;
+      authError = 'Tenging við þjón mistókst. Reyndu aftur síðar.';
     }
   }
 
